@@ -1,51 +1,40 @@
+version: '3.8'
+
 services:
   backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+    image: maelmichaud/node-backend:latest
     container_name: node-backend
     ports:
       - "3000:3000"
     environment:
-      - DB_HOST=db
+      - DB_HOST=postgres-db
       - DB_PORT=5432
-    secrets:
-      - db_user
-      - db_password
-      - db_name
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
     depends_on:
-      - db
-    volumes:
-      - ./backend:/app
-      - /app/node_modules
-    command: sh -c "
-      export DB_USER=$(cat /run/secrets/db_user) &&
-      export DB_PASSWORD=$(cat /run/secrets/db_password) &&
-      export DB_NAME=$(cat /run/secrets/db_name) &&
-      npm install && npm run dev "
-  db:
+      - postgres-db
+  
+  frontend:
+    image: maelmichaud/react-frontend:latest
+    container_name: react-frontend
+    ports:
+      - "3001:80"
+    depends_on:
+      - backend
+
+  postgres-db:
     image: postgres:14
     container_name: postgres-db
     ports:
-      - "5432:5432"
-    secrets:
-      - db_user
-      - db_password
-      - db_name
+      - "${DB_PORT}:${DB_PORT}"
     environment:
-      POSTGRES_USER_FILE: /run/secrets/db_user
-      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
-      POSTGRES_DB_FILE: /run/secrets/db_name
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
     volumes:
       - pgdata:/var/lib/postgresql/data
-
-secrets:
-  db_user:
-    file: ./secrets/db_user.txt
-  db_password:
-    file: ./secrets/db_password.txt
-  db_name:
-    file: ./secrets/db_name.txt
+    restart: unless-stopped
 
 volumes:
   pgdata:
