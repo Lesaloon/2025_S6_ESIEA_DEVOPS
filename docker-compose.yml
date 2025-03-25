@@ -11,10 +11,9 @@ services:
     environment:
       - DB_HOST=db
       - DB_PORT=5432
-    secrets:
-      - db_user
-      - db_password
-      - db_name
+      - DB_USER=${{ secrets.DB_USER }}
+      - DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+      - DB_NAME=${{ secrets.DB_NAME }}
     depends_on:
       - db
     volumes:
@@ -23,15 +22,7 @@ services:
     networks:
       - backend-network
       - shared-network
-    command: >
-      sh -c "
-        export DB_USER=$(cat /run/secrets/db_user) &&
-        export DB_PASSWORD=$(cat /run/secrets/db_password) &&
-        export DB_NAME=$(cat /run/secrets/db_name) &&
-        npm install &&
-        npm run dev
-      "
-
+    command: sh -c "npm install && npm run dev"
   frontend:
     build:
       context: ./frontend
@@ -50,14 +41,10 @@ services:
     container_name: postgres-db
     ports:
       - "5432:5432"
-    secrets:
-      - db_user
-      - db_password
-      - db_name
     environment:
-      POSTGRES_USER_FILE: /run/secrets/db_user
-      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
-      POSTGRES_DB_FILE: /run/secrets/db_name
+      POSTGRES_USER: ${{ secrets.DB_USER }}
+      POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      POSTGRES_DB: ${{ secrets.DB_NAME }}
     volumes:
       - pgdata:/var/lib/postgresql/data
     networks:
@@ -75,11 +62,3 @@ networks:
     driver: bridge
   shared-network:
     driver: bridge
-
-secrets:
-  db_user:
-    file: ./secrets/db_user.txt
-  db_password:
-    file: ./secrets/db_password.txt
-  db_name:
-    file: ./secrets/db_name.txt
