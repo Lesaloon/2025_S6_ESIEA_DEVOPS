@@ -3,12 +3,11 @@ import { formatDate } from "@/lib/utils";
 import { Button } from "./ui/button";
 
 interface ReviewCardProps {
-  author: string; // Changed to string
+  author: string;
   rating: number;
   date: string;
   content: string;
   helpfulCount: number;
-  images?: string[];
 }
 
 export function ReviewCard({
@@ -17,20 +16,13 @@ export function ReviewCard({
   date,
   content,
   helpfulCount,
-  images,
 }: ReviewCardProps) {
   return (
     <div className="border-b py-6">
       <div className="flex gap-4">
-        <img
-          src={`https://api.adorable.io/avatars/50/${author}.png`}
-          alt={author}
-          className="w-12 h-12 rounded-full"
-        />
         <div>
           <h3 className="font-semibold">{author}</h3>
           <p className="text-sm text-gray-500">
-            {/* Assuming reviewCount is not available in the new type */}
           </p>
         </div>
       </div>
@@ -49,19 +41,6 @@ export function ReviewCard({
         </div>
 
         <p className="mt-4 text-gray-700">{content}</p>
-
-        {images && images.length > 0 && (
-          <div className="mt-4 flex gap-2 overflow-x-auto">
-            {images.map((image, index) => (
-              <img
-                key={index}
-                src={image}
-                alt={`Photo ${index + 1}`}
-                className="w-32 h-32 object-cover rounded-lg"
-              />
-            ))}
-          </div>
-        )}
 
         <div className="mt-4 flex items-center gap-4">
           <Button variant="outline" size="sm">

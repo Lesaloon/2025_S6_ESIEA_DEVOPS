@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import {
   Star,
@@ -7,56 +6,26 @@ import {
   Globe,
   Clock,
   Share2,
-  Heart,
-  Camera
+  Heart
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ReviewCard } from "@/components/review-card";
-import axios from "axios";
 import { useMockData } from "@/contexts/MockDataContext";
 
 export function BusinessPage() {
   const { id } = useParams();
   const { businesses, reviews } = useMockData();
   const business = businesses.find(b => b.id === id);
-  const [selectedImage, setSelectedImage] = useState(0);
 
   if (!business) {
-    return <div>Business not found</div>;
+    return null;
   }
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Images */}
-      <div className="h-[400px] bg-gray-100 relative">
-        <div className="grid grid-cols-4 h-full">
-          {business.images.map((image, index) => (
-            <div
-              key={index}
-              className={`relative overflow-hidden ${
-                index === 0 ? "col-span-2 row-span-2" : ""
-              }`}
-            >
-              <img
-                src={image}
-                alt={`${business.name} - Photo ${index + 1}`}
-                className="w-full h-full object-cover"
-              />
-            </div>
-          ))}
-        </div>
-        <Button
-          className="absolute bottom-4 right-4"
-          variant="outline"
-        >
-          <Camera className="w-4 h-4 mr-2" />
-          Voir toutes les photos
-        </Button>
-      </div>
 
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
-          {/* Informations principales */}
           <div className="flex-1">
             <div className="bg-white rounded-lg shadow-sm border p-6 mb-8">
               <div className="flex justify-between items-start">
@@ -117,7 +86,6 @@ export function BusinessPage() {
             </div>
           </div>
 
-          {/* Informations de contact */}
           <div className="w-full lg:w-80">
             <div className="bg-white rounded-lg shadow-sm border p-6 sticky top-4">
               <div className="space-y-4">

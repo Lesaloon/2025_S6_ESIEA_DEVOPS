@@ -7,7 +7,6 @@ export type User = {
     password: string;
     firstName: string;
     lastName: string;
-    avatar?: string;
     role: "user" | "admin";
     businesses: Business[];
     reviews: Review[];

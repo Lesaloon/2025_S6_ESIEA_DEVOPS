@@ -51,11 +51,21 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
         {notifications.map((notification) => (
           <div
             key={notification.id}
-            className={`p-4 rounded shadow-lg flex items-center justify-between ${getNotificationColor(notification.type)}`}
+            className={`flex items-start gap-4 p-4 pr-5 border border-white/20 shadow-xl rounded-lg text-white backdrop-blur-lg transition-all animate-fade-in-up ${
+              getNotificationColor(notification.type)
+            }`}
           >
-            <span>{notification.message}</span>
-            <button onClick={() => removeNotification(notification.id)} className="ml-4 text-white hover:text-gray-200">
-              &times;
+            <div className="text-xl">
+              {notification.type === "success" && "✅"}
+              {notification.type === "error" && "❌"}
+              {notification.type === "info" && "ℹ️"}
+            </div>
+            <div className="flex-1">{notification.message}</div>
+            <button
+              onClick={() => removeNotification(notification.id)}
+              className="ml-4 text-white hover:text-gray-300 font-bold"
+            >
+              ×
             </button>
           </div>
         ))}

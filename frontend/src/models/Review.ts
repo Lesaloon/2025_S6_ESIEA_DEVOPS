@@ -4,7 +4,6 @@ export type Review = {
     rating: number;
     date: string;
     content: string;
-    images?: string[];
     author: string;
     helpfulCount: number;
 };

@@ -4,7 +4,6 @@ export type Business = {
     category: string;
     rating: number;
     reviewCount: number;
-    images: string[];
     address: string;
     description: string;
     phone: string;

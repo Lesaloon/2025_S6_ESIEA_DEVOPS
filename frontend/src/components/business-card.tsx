@@ -7,7 +7,6 @@ interface BusinessCardProps {
   category: string;
   rating: number;
   reviewCount: number;
-  images: string[]; // Changed to array
   address: string;
 }
 
@@ -17,19 +16,11 @@ export function BusinessCard({
   category,
   rating,
   reviewCount,
-  images,
   address,
 }: BusinessCardProps) {
   return (
     <Link to={`/business/${id}`} className="group">
       <div className="border rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
-        <div className="aspect-video relative overflow-hidden">
-          <img
-            src={images[0]} // Use the first image
-            alt={name}
-            className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
-          />
-        </div>
         <div className="p-4">
           <h3 className="font-semibold text-lg">{name}</h3>
           <div className="flex items-center gap-1 text-yellow-500 mt-1">
