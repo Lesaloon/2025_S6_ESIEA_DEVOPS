@@ -13,8 +13,7 @@ services:
       - DB_PASSWORD=$${{ secrets.DB_PASSWORD }}
       - DB_NAME=$${{ secrets.DB_NAME }}
     depends_on:
-      postgres-db:
-        condition: service_healthy
+      - postgres-db
   
   frontend:
     image: maelmichaud/react-frontend:latest
@@ -36,11 +35,6 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
 
 volumes:
   pgdata:
