@@ -38,7 +38,7 @@ export class Business
   features!: string[];
 
   reviews?: Review[] | undefined;
-  owner: User;
+  owner?: User;
 }
 
 Business.init(

@@ -2,12 +2,12 @@ import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
-import { sequelize } from './config/db.config.ts';
+import { sequelize } from './config/db.config';
 
-import userRoutes from './routes/user.routes.ts';
-import authRoutes from './routes/auth.routes.ts';
-import placeRoutes from './routes/place.routes.ts';
-import reviewRoutes from './routes/review.routes.ts';
+import userRoutes from './routes/user.routes';
+import authRoutes from './routes/auth.routes';
+import placeRoutes from './routes/place.routes';
+import reviewRoutes from './routes/review.routes';
 
 dotenv.config();
 
@@ -22,3 +22,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/places', placeRoutes);
 app.use('/api/reviews', reviewRoutes);
+
+app.listen(PORT, () => {
+	  console.log(`Server is running on port ${PORT}`);
+})

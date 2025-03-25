@@ -1,5 +1,5 @@
 import {Router} from "express";
-import PlaceController from "../controllers/place.controller.ts";
+import PlaceController from "../controllers/place.controller";
 
 const router = Router();
 

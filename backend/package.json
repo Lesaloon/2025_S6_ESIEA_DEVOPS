@@ -1,20 +1,30 @@
 {
-  "name": "backend",
-  "version": "1.0.0",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "ISC",
-  "description": "",
-  "devDependencies": {
-    "body-parser": "^1.20.3",
-    "express": "^4.21.2",
-    "jsonwebtoken": "^9.0.2",
-    "sequelize": "^6.37.6"
-  },
-  "dependencies": {
-    "crypto": "^1.0.1"
-  }
+	"name": "backend",
+	"version": "1.0.0",
+	"main": "index.js",
+	"scripts": {
+		"run": "ts-node start.ts",
+		"dev": "nodemon --exec ts-node start.ts",
+		"build": "tsc",
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"author": "",
+	"license": "ISC",
+	"description": "",
+	"devDependencies": {
+		"@types/body-parser": "^1.19.5",
+		"@types/cors": "^2.8.17",
+		"@types/express": "^5.0.1",
+		"ts-node": "^10.9.2"
+	},
+	"dependencies": {
+		"body-parser": "^1.20.3",
+		"crypto": "^1.0.1",
+		"express": "^4.21.2",
+		"jsonwebtoken": "^9.0.2",
+		"nodemon": "^3.1.9",
+		"pg": "^8.14.1",
+		"sequelize": "^6.37.6",
+		"typescript": "^5.8.2"
+	}
 }

@@ -1,8 +1,22 @@
 import { Request, Response } from 'express';
+import DAOFactory from '../dao/DAOFactory';
+import { Business } from '../model/business.model';
 
 class PlaceController {
+
+	/**
+	 * @description Get all places
+	 * @route GET /places
+	 * @access Public
+	 * @returns {Object} 200 - An array of places
+	 * @returns {Error} 500 - Internal server error
+	 * @param req 
+	 * @param res 
+	 */
 	static async getAllPlaces(req: Request, res: Response) {
-		res.send("Get all places");
+		const businessDao = DAOFactory.getDAO(Business);
+		const business = await businessDao.findAll();
+		res.status(200).json(business);
 	}
 
 	static async getPlaceById(req: Request, res: Response) {

@@ -1,5 +1,5 @@
 import {Router} from "express";
-import AuthController from "../controllers/auth.controller.ts";
+import AuthController from "../controllers/auth.controller";
 
 const router = Router();
 
@@ -12,7 +12,6 @@ router.post("/reset-password", AuthController.resetPassword);
 router.post("/forgot-password", AuthController.forgotPassword);
 router.post("/change-password", AuthController.changePassword);
 router.post("/update-profile", AuthController.updateProfile);
-router.post("/update-avatar", AuthController.updateAvatar);
 router.post("/delete-account", AuthController.deleteAccount);
 
 export default router;
