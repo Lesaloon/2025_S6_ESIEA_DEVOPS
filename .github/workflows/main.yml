@@ -104,11 +104,11 @@ jobs:
           newgrp docker
 
       - name: Lancer docker-compose
-        run: docker-compose up -d --build
+        run: docker compose up -d --build
 
       - name: Vérifier les conteneurs actifs
         run: docker ps
 
       - name: Nettoyage
         if: always()
-        run: docker-compose down --volumes
+        run: docker compose down --volumes
