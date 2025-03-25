@@ -103,12 +103,24 @@ jobs:
           sudo usermod -aG docker $USER
           newgrp docker
 
+      - name: Créer le fichier .env dans backend
+        run: |
+          echo "DB_HOST=postgres-db" > ./backend/.env
+          echo "DB_PORT=5432" >> ./backend/.env
+          echo "DB_USER=${{ secrets.DB_USER }}" >> ./backend/.env
+          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> ./backend/.env
+          echo "DB_NAME=${{ secrets.DB_NAME }}" >> ./backend/.env
+
       - name: Lancer docker-compose
-        run: docker compose up -d --build
+        run: docker compose --env-file ./backend/.env up -d --build
 
       - name: Vérifier les conteneurs actifs
         run: docker ps
 
       - name: Nettoyage
         if: always()
-        run: docker compose down --volumes
+        run: docker compose --env-file ./backend/.env down --volumes
+
+      - name: Supprimer le fichier .env
+        if: always()
+        run: rm -f ./backend/.env
