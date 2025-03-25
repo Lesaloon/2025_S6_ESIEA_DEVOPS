@@ -2,9 +2,7 @@ version: '3.8'
 
 services:
   backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+    image: maelmichaud/node-backend:latest
     container_name: node-backend
     ports:
       - "3000:3000"
@@ -19,9 +17,7 @@ services:
         condition: service_healthy
   
   frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
+    image: maelmichaud/react-frontend:latest
     container_name: react-frontend
     ports:
       - "3001:80"
