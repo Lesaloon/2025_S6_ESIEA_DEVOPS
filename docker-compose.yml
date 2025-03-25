@@ -15,7 +15,8 @@ services:
       - DB_PASSWORD=${{ secrets.DB_PASSWORD }}
       - DB_NAME=${{ secrets.DB_NAME }}
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     volumes:
       - ./backend:/app:delegated
       - backend-node-modules:/app/node_modules
@@ -50,6 +51,11 @@ services:
     networks:
       - backend-network
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 volumes:
   pgdata:
