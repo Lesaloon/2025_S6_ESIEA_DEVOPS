@@ -5,7 +5,7 @@ import { Review } from "./review.model";
 import crypto from "crypto";
 
 export interface UserAttributes {
-  id: string;
+  id: number;
   email: string;
   password: string;
   firstName: string;
@@ -23,7 +23,7 @@ export class User
   extends Model<UserAttributes, UserCreationAttributes>
   implements UserAttributes
 {
-  id!: string;
+  id!: number;
   email!: string;
   password!: string;
   firstName!: string;
@@ -37,7 +37,8 @@ export class User
 User.init(
   {
     id: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
+	  autoIncrement: true,
       primaryKey: true,
       allowNull: false,
     },

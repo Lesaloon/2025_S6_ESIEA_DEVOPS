@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import DAOFactory from '../dao/DAOFactory';
 import { Business } from '../model/business.model';
+import BusinessService from '../services/business.service';
 
 class PlaceController {
 
@@ -14,8 +14,7 @@ class PlaceController {
 	 * @param res 
 	 */
 	static async getAllPlaces(req: Request, res: Response) {
-		const businessDao = DAOFactory.getDAO(Business);
-		const business = await businessDao.findAll();
+		const business = await BusinessService.getAllBusinesses();
 		res.status(200).json(business);
 	}
 
