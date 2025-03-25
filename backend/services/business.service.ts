@@ -7,6 +7,12 @@ class BusinessService {
 	static async getAllBusinesses() {
 		return await this.businessDao.findAll();
 	}
+
+	static async getBusinessById(id: number) {
+		return await this.businessDao.findById(id);
+	}
+
+
 }
 
 export default BusinessService;

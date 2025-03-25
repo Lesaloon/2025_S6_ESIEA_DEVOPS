@@ -5,7 +5,7 @@ import { User } from "./user.model";
 import crypto from "crypto";
 
 export interface BusinessAttributes {
-  id: string;
+  id: number;
   name: string;
   category: string;
   rating: number;
@@ -25,7 +25,7 @@ export class Business
   extends Model<BusinessAttributes, BusinessCreationAttributes>
   implements BusinessAttributes
 {
-  id!: string;
+  id!: number;
   name!: string;
   category!: string;
   rating!: number;
@@ -44,7 +44,8 @@ export class Business
 Business.init(
   {
     id: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
+	  autoIncrement: true,
       primaryKey: true,
       allowNull: false,
     },
