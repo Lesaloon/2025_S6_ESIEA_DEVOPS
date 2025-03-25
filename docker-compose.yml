@@ -14,7 +14,7 @@ services:
       - DB_NAME=${DB_NAME}
     depends_on:
       - postgres-db
-  
+
   frontend:
     image: maelmichaud/react-frontend:latest
     container_name: react-frontend
