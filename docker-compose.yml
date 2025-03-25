@@ -1,0 +1,51 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: node-backend
+    ports:
+      - "3000:3000"
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+    secrets:
+      - db_user
+      - db_password
+      - db_name
+    depends_on:
+      - db
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    command: sh -c "
+      export DB_USER=$(cat /run/secrets/db_user) &&
+      export DB_PASSWORD=$(cat /run/secrets/db_password) &&
+      export DB_NAME=$(cat /run/secrets/db_name) &&
+      npm install && npm run dev "
+  db:
+    image: postgres:14
+    container_name: postgres-db
+    ports:
+      - "5432:5432"
+    secrets:
+      - db_user
+      - db_password
+      - db_name
+    environment:
+      POSTGRES_USER_FILE: /run/secrets/db_user
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
+      POSTGRES_DB_FILE: /run/secrets/db_name
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+secrets:
+  db_user:
+    file: ./secrets/db_user.txt
+  db_password:
+    file: ./secrets/db_password.txt
+  db_name:
+    file: ./secrets/db_name.txt
+
+volumes:
+  pgdata:
