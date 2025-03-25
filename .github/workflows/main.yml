@@ -72,3 +72,26 @@ jobs:
 
       - name: Build Docker image - frontend
         run: docker build -t frontend-image:latest ./frontend
+
+  docker-compose-test:
+    name: Test de l'intégration Docker Compose
+    runs-on: ubuntu-latest
+    needs: [docker-backend, docker-frontend]
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Compose
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker-compose
+
+      - name: Lancer docker-compose
+        run: docker-compose up -d --build
+
+      - name: Vérifier les conteneurs actifs
+        run: docker ps
+
+      - name: Nettoyage
+        if: always()
+        run: docker-compose down --volumes

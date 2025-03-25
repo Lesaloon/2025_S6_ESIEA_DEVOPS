@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   backend:
     build:
@@ -16,13 +18,33 @@ services:
     depends_on:
       - db
     volumes:
-      - ./backend:/app
-      - /app/node_modules
-    command: sh -c "
-      export DB_USER=$(cat /run/secrets/db_user) &&
-      export DB_PASSWORD=$(cat /run/secrets/db_password) &&
-      export DB_NAME=$(cat /run/secrets/db_name) &&
-      npm install && npm run dev "
+      - ./backend:/app:delegated
+      - backend-node-modules:/app/node_modules
+    networks:
+      - backend-network
+      - shared-network
+    command: >
+      sh -c "
+        export DB_USER=$(cat /run/secrets/db_user) &&
+        export DB_PASSWORD=$(cat /run/secrets/db_password) &&
+        export DB_NAME=$(cat /run/secrets/db_name) &&
+        npm install &&
+        npm run dev
+      "
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: react-frontend
+    ports:
+      - "3001:80"
+    depends_on:
+      - backend
+    networks:
+      - frontend-network
+      - shared-network
+
   db:
     image: postgres:14
     container_name: postgres-db
@@ -38,6 +60,21 @@ services:
       POSTGRES_DB_FILE: /run/secrets/db_name
     volumes:
       - pgdata:/var/lib/postgresql/data
+    networks:
+      - backend-network
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  backend-node-modules:
+
+networks:
+  backend-network:
+    driver: bridge
+  frontend-network:
+    driver: bridge
+  shared-network:
+    driver: bridge
 
 secrets:
   db_user:
@@ -46,6 +83,3 @@ secrets:
     file: ./secrets/db_password.txt
   db_name:
     file: ./secrets/db_name.txt
-
-volumes:
-  pgdata:
