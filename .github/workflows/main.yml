@@ -25,9 +25,9 @@ jobs:
         working-directory: ./backend
         run: npm install
 
-      - name: Lancement du projet backend
+      - name: Build du backend
         working-directory: ./backend
-        run: timeout 10s npm start
+        run: npm run build
 
   frontend:
     name: Frontend CI
