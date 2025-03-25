@@ -77,7 +77,7 @@ User.init(
 
 User.beforeCreate(async (user) => {
   user.password = await crypto.hash("sha512", user.password);
-  user.id = crypto.randomUUID();
+  user.id = +crypto.randomUUID();
 });
 
 User.beforeUpdate(async (user) => {
