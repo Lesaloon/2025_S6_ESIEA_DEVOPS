@@ -15,14 +15,8 @@ services:
       - DB_PASSWORD=${{ secrets.DB_PASSWORD }}
       - DB_NAME=${{ secrets.DB_NAME }}
     depends_on:
-      db:
+      postgres-db:
         condition: service_healthy
-    volumes:
-      - ./backend:/app:delegated
-      - backend-node-modules:/app/node_modules
-    networks:
-      - backend-network
-      - shared-network
     command: sh -c "npm install && npm run dev"
   frontend:
     build:
@@ -33,11 +27,8 @@ services:
       - "3001:80"
     depends_on:
       - backend
-    networks:
-      - frontend-network
-      - shared-network
 
-  db:
+  postgres-db:
     image: postgres:14
     container_name: postgres-db
     ports:
@@ -48,8 +39,6 @@ services:
       POSTGRES_DB: ${{ secrets.DB_NAME }}
     volumes:
       - pgdata:/var/lib/postgresql/data
-    networks:
-      - backend-network
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "pg_isready"]
@@ -59,12 +48,3 @@ services:
 
 volumes:
   pgdata:
-  backend-node-modules:
-
-networks:
-  backend-network:
-    driver: bridge
-  frontend-network:
-    driver: bridge
-  shared-network:
-    driver: bridge
