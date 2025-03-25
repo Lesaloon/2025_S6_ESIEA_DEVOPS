@@ -1,12 +1,6 @@
 import { create } from 'zustand';
-import axios from 'axios';
-import { jwtDecode } from 'jwt-decode';
-
-interface User {
-  id: string;
-  email: string;
-  name: string;
-}
+import { User } from '@/models/User';
+import { useMockData } from '@/contexts/MockDataContext';
 
 interface AuthState {
   token: string | null;
@@ -27,13 +21,16 @@ export const useAuth = create<AuthState>((set) => ({
   login: async (email: string, password: string) => {
     try {
       set({ isLoading: true, error: null });
-      const response = await axios.post('/api/auth/login', { email, password });
-      const { token } = response.data;
+      const { users } = useMockData();
+      const user = users.find(user => user.email === email && user.password === password);
       
-      localStorage.setItem('token', token);
-      const user = jwtDecode<User>(token);
-      
-      set({ token, user, isLoading: false });
+      if (user) {
+        const token = btoa(`${email}:${password}`);
+        localStorage.setItem('token', token);
+        set({ token, user, isLoading: false });
+      } else {
+        throw new Error('Email ou mot de passe incorrect');
+      }
     } catch (error) {
       set({ 
         error: error instanceof Error ? error.message : 'Une erreur est survenue',

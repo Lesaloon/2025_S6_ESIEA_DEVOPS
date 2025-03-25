@@ -6,10 +6,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { useAuth } from '@/lib/auth';
+import { useAuth } from '@/contexts/AuthContext';
+import { useNotification } from '@/contexts/NotificationContext';
 
 const loginSchema = z.object({
-  email: z.string().email('Email invalide'),
+  email: z.string().email('Veuillez entrer un email valide'),
   password: z.string().min(6, 'Le mot de passe doit contenir au moins 6 caractères'),
 });
 
@@ -17,8 +18,10 @@ type LoginForm = z.infer<typeof loginSchema>;
 
 export function LoginPage() {
   const navigate = useNavigate();
-  const { login, isLoading, error } = useAuth();
+  const { login } = useAuth();
+  const { addNotification } = useNotification();
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState('');
 
   const {
     register,
@@ -29,9 +32,18 @@ export function LoginPage() {
   });
 
   const onSubmit = async (data: LoginForm) => {
-    await login(data.email, data.password);
-    if (!error) {
+    try {
+      login(data.email, data.password);
       navigate('/');
+    } catch (err) {
+      if (err.response) {
+        setError('Email ou mot de passe incorrect.');
+      } else if (err.request) {
+        setError('Network error. Please try again.');
+      } else {
+        setError('An unexpected error occurred.');
+      }
+      addNotification(error);
     }
   };
 
@@ -107,9 +119,8 @@ export function LoginPage() {
               <Button
                 type="submit"
                 className="w-full"
-                disabled={isLoading}
               >
-                {isLoading ? 'Connexion...' : 'Se connecter'}
+                Se connecter
               </Button>
             </div>
           </form>

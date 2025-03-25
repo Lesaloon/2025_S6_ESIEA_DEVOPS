@@ -4,10 +4,12 @@ import { Search, User, Menu } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
+import { useAuth } from "@/contexts/AuthContext";
 
 export function Navbar() {
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
 
   const handleSearch = () => {
     navigate(`/search?term=${searchTerm}`);
@@ -34,15 +36,28 @@ export function Navbar() {
         </div>
         
         <div className="flex items-center gap-4">
-          <Link to="/add-business">
-            <Button variant="outline">Ajouter un commerce</Button>
+          <Link to="/search" className="text-gray-700 hover:text-primary">
+            Rechercher
           </Link>
-          <Link to="/login">
-            <Button>
-              <User className="w-5 h-5 mr-2" />
-              Connexion
-            </Button>
-          </Link>
+          {user ? (
+            <>
+              <Link to="/profile" className="text-gray-700 hover:text-primary">
+                Mon Profil
+              </Link>
+              <Button variant="outline" onClick={logout}>
+                Déconnexion
+              </Button>
+            </>
+          ) : (
+            <>
+              <Link to="/login" className="text-gray-700 hover:text-primary">
+                Connexion
+              </Link>
+              <Link to="/register" className="text-gray-700 hover:text-primary">
+                Inscription
+              </Link>
+            </>
+          )}
           <Button variant="ghost" className="md:hidden">
             <Menu className="w-5 h-5" />
           </Button>

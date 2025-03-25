@@ -8,16 +8,22 @@ import { useMockData } from "@/contexts/MockDataContext";
 export function HomePage() {
   const { businesses, categories } = useMockData();
   const [searchTerm, setSearchTerm] = useState("");
-  const [location, setLocation] = useState("");
   const navigate = useNavigate();
 
   const handleSearch = () => {
-    navigate(`/search?term=${searchTerm}&location=${location}`);
+    navigate(`/search?term=${searchTerm}`);
   };
+
+  const handleKeyPress = (e: { key: string; }) => {
+    if (e.key === "Enter") {
+      handleSearch();
+    }
+  };
+
+
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Hero Section */}
       <div className="bg-white py-20 text-center">
         <div className="container mx-auto px-4">
           <h1 className="text-4xl font-bold mb-6">
@@ -33,13 +39,7 @@ export function HomePage() {
               className="flex-1 border-0 focus-visible:ring-0"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-            />
-            <Input
-              type="text"
-              placeholder="Où ? (ville, quartier...)"
-              className="flex-1 border-0 focus-visible:ring-0"
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
+              onKeyPress={handleKeyPress}
             />
             <button
               className="bg-primary text-white rounded-full px-8 py-2 hover:bg-primary/90"
@@ -51,17 +51,15 @@ export function HomePage() {
         </div>
       </div>
 
-      {/* Popular Businesses */}
       <div className="container mx-auto px-4 py-16">
         <h2 className="text-2xl font-bold mb-8">Commerces populaires</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {businesses.map((business) => (
-            <BusinessCard key={business.id} {...business} images={business.images} />
+            <BusinessCard key={business.id} {...business} />
           ))}
         </div>
       </div>
 
-      {/* Categories */}
       <div className="container mx-auto px-4 py-16">
         <h2 className="text-2xl font-bold mb-8">Explorer par catégorie</h2>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
