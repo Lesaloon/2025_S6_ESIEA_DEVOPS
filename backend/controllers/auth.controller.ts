@@ -38,10 +38,6 @@ class AuthController {
 		res.send("Update profile");
 	}
 
-	static updateAvatar(req: Request, res: Response) {
-		res.send("Update avatar");
-	}
-
 	static deleteAccount(req: Request, res: Response) {
 		res.send("Delete account");
 	}
