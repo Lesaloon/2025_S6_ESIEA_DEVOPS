@@ -97,7 +97,9 @@ jobs:
           file: ./backend/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: maelmichaud/node-backend:latest
+          tags: |
+            maelmichaud/node-backend:latest
+            maelmichaud/node-backend:${{ github.sha }}
 
       - name: Build & Push Frontend Image
         uses: docker/build-push-action@v5
@@ -106,7 +108,9 @@ jobs:
           file: ./frontend/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: maelmichaud/react-frontend:latest
+          tags: |
+            maelmichaud/react-frontend:latest
+            maelmichaud/react-frontend:${{ github.sha }}
 
   docker-compose-test:
     name: Test de l'intégration Docker Compose
