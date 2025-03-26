@@ -24,20 +24,24 @@ app.use(bodyParser.json());
 // use routes
 app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
-app.use('/api/businesss', businessRoutes);
+app.use('/api/businesses', businessRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api', (req, res) => {
   res.send('Welcome to the API');
 });
 
 setupAssociations();
-sequelize.sync({ alter: true })
-  .then(() => {
-    logger.info('✅ Base de données synchronisée');
-    app.listen(PORT, () => {
-      logger.info(`🚀 Serveur démarré sur le port ${PORT}`);
+if (process.env.NODE_ENV !== 'test') {
+  sequelize.sync({ alter: true })
+    .then(() => {
+      logger.info('✅ Base de données synchronisée');
+      app.listen(PORT, () => {
+        logger.info(`🚀 Serveur démarré sur le port ${PORT}`);
+      });
+    })
+    .catch((err) => {
+      logger.error('❌ Erreur lors de la synchronisation de la base de données :', err);
     });
-  })
-  .catch((err) => {
-    logger.error('❌ Erreur lors de la synchronisation de la base de données :', err);
-  });
+}
+
+export default app;
