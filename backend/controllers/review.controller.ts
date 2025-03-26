@@ -32,6 +32,16 @@ class ReviewController {
 		}
 	}
 
+	static async deleteReview(req: Request, res: Response) {
+		const { id } = req.params;
+		const deleted = await ReviewService.deleteReview(Number(id));
+		if (deleted) {
+			res.status(204).send();
+		} else {
+			res.status(404).send();
+		}
+	}
+
 }
 
 export default ReviewController;

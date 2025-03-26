@@ -4,15 +4,6 @@ import BusinessService from '../services/business.service';
 
 class BusinessController {
 
-	/**
-	 * @description Get all businesss
-	 * @route GET /businesss
-	 * @access Public
-	 * @returns {Object} 200 - An array of businesss
-	 * @returns {Error} 500 - Internal server error
-	 * @param req 
-	 * @param res 
-	 */
 	static async getAllBusinesss(req: Request, res: Response) {
 		const business = await BusinessService.getAllBusinesses();
 		res.status(200).json(business);
