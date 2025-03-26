@@ -3,6 +3,7 @@ import cors from 'cors';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import { sequelize } from './config/db.config';
+import Log from './config/log.config';
 
 import userRoutes from './routes/user.routes';
 import authRoutes from './routes/auth.routes';
@@ -13,6 +14,8 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+const logger = new Log().getLogger();
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -28,11 +31,11 @@ app.use('/api', (req, res) => {
 
 sequelize.sync({ alter: true })
   .then(() => {
-    console.log('✅ Base de données synchronisée');
+    logger.info('✅ Base de données synchronisée');
     app.listen(PORT, () => {
-      console.log(`🚀 Serveur démarré sur le port ${PORT}`);
+      logger.info(`🚀 Serveur démarré sur le port ${PORT}`);
     });
   })
   .catch((err) => {
-    console.error('❌ Erreur lors de la synchronisation de la base de données :', err);
+    logger.error('❌ Erreur lors de la synchronisation de la base de données :', err);
   });

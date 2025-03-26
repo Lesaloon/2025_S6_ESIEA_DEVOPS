@@ -8,23 +8,21 @@ class BusinessService {
 		return await this.businessDao.findAll();
 	}
 
-	static async getBusinessById(id: number) {
+	static async getBusinessById(id: number): Promise<BusinessAttributes | null> {
 		return await this.businessDao.findById(id);
 	}
 
-	static async createBusiness(business: Business) {
+	static async createBusiness(business: BusinessAttributes): Promise<BusinessAttributes> {
 		return await this.businessDao.create(business);
 	}
 
-	static async updateBusiness(businessId: number, business: Partial<Business>) {
+	static async updateBusiness(businessId: number, business: Partial<Business>): Promise<BusinessAttributes | null> {
 		return await this.businessDao.update(businessId, business);
 	}
 
-	static async deleteBusiness(id: number) {
+	static async deleteBusiness(id: number): Promise<boolean> {
 		return await this.businessDao.delete(id);
 	}
-
-
 }
 
 export default BusinessService;
