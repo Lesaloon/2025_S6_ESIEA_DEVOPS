@@ -62,4 +62,3 @@ Review.init(
 );
 
 Review.belongsTo(Business, { foreignKey: "businessId" });
-Review.belongsTo(User, { foreignKey: "userId" });

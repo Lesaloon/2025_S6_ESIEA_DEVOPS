@@ -9,5 +9,5 @@
     "skipLibCheck": true,
     "strict": true
   },
-  "include": ["src", "routes", "tests", "__tests__/auth.routes.test.ts", "__tests__/place.routes.test.ts", "__tests__/review.routes.test.ts", "__tests__/user.routes.test.ts"]
+  "include": ["src", "routes", "tests", "__tests__/auth.routes.test.ts", "__tests__/business.routes.test.ts", "__tests__/review.routes.test.ts", "__tests__/user.routes.test.ts"]
 }
