@@ -22,7 +22,17 @@ app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/places', placeRoutes);
 app.use('/api/reviews', reviewRoutes);
+app.use('/api', (req, res) => {
+	  res.send('Welcome to the API');
+});
 
-app.listen(PORT, () => {
-	  console.log(`Server is running on port ${PORT}`);
-})
+sequelize.sync({ alter: true })
+  .then(() => {
+    console.log('✅ Base de données synchronisée');
+    app.listen(PORT, () => {
+      console.log(`🚀 Serveur démarré sur le port ${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error('❌ Erreur lors de la synchronisation de la base de données :', err);
+  });
