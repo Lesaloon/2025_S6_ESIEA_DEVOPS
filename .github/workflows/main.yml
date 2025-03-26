@@ -88,10 +88,12 @@ jobs:
       - name: Checkout du code
         uses: actions/checkout@v3
 
-      - name: Récupérer la version depuis le fichier VERSION
+      - name: Générer un tag basé sur la date et le commit
         id: get_version
         run: |
-          TAG="v$(cat VERSION)"
+          SHORT_SHA=$(git rev-parse --short HEAD)
+          DATE=$(date +'%Y-%m-%d')
+          TAG="v${DATE}-${SHORT_SHA}"
           echo "tag=$TAG" >> $GITHUB_OUTPUT
 
       - name: Créer un tag Git
