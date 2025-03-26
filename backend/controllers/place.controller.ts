@@ -19,35 +19,30 @@ class PlaceController {
 	}
 
 	static async getPlaceById(req: Request, res: Response) {
-		res.send("Get place by id");
+		const { id } = req.params;
+		const business = await BusinessService.getBusinessById(Number(id));
+		res.status(200).json(business);
 	}
 
 	static async createPlace(req: Request, res: Response) {
-		res.send("Create place");
+		const business = await BusinessService.createBusiness(req.body as Business);
+		res.status(201).json(business);
 	}
 
 	static async updatePlace(req: Request, res: Response) {
-		res.send("Update place");
+		const { id } = req.params;
+		const business = await BusinessService.updateBusiness(Number(id), req.body as Business);
+		res.status(200).json(business);
 	}
 
 	static async deletePlace(req: Request, res: Response) {
-		res.send("Delete place");
-	}
-
-	static async getPlacesByUserId(req: Request, res: Response) {
-		res.send("Get places by user id");
-	}
-
-	static async getPlacesByCategory(req: Request, res: Response) {
-		res.send("Get places by category");
-	}
-
-	static async getPlacesByLocation(req: Request, res: Response) {
-		res.send("Get places by location");
-	}
-
-	static async searchPlaces(req: Request, res: Response) {
-		res.send("Search places");
+		const { id } = req.params;
+		const deleted = await BusinessService.deleteBusiness(Number(id));
+		if (deleted) {
+			res.status(204).send();
+		} else {
+			res.status(404).send();
+		}
 	}
 }
 
