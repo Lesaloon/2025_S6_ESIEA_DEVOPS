@@ -62,39 +62,40 @@ jobs:
         working-directory: ./frontend
         run: npm run build
 
-      - name: Installation de ChromeDriver
-        uses: nanasess/setup-chromedriver@v2
-        with:
-          chromedriver-version: '88.0.4324.96'
-          chromeapp: chrome
-      - run: |
-          export DISPLAY=:99
-          chromedriver --url-base=/wd/hub &
-          sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 & # optional
-
-      - name: Installation de Python et des dépendances Selenium
+      - name: Installer Chrome stable et ChromeDriver correspondant
         run: |
           sudo apt-get update
-          sudo apt-get install -y python3-pip
-          pip install -r selenium/requirements.txt
-
+          sudo apt-get install -y unzip wget curl gnupg lsb-release python3-pip
+          wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+          sudo apt install -y ./google-chrome-stable_current_amd64.deb
+      
+          CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+')
+          MAJOR_VERSION=$(echo $CHROME_VERSION | cut -d. -f1)
+          DRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$MAJOR_VERSION")
+          wget "https://chromedriver.storage.googleapis.com/${DRIVER_VERSION}/chromedriver_linux64.zip"
+          unzip chromedriver_linux64.zip
+          sudo mv chromedriver /usr/bin/chromedriver
+          sudo chmod +x /usr/bin/chromedriver
+          chromedriver --version
+          google-chrome --version
+      
+      - name: Installer les dépendances Python
+        run: pip install selenium pytest
+      
       - name: Lancer le serveur frontend
         working-directory: ./frontend
-        run: |
-          nohup npm run preview &
-
+        run: nohup npm run preview &
+      
       - name: Attendre que le serveur soit prêt
         run: |
-          echo "Attente du démarrage du serveur frontend..."
-          until curl -s http://localhost:4173 > /dev/null; do
-            sleep 2
+          echo "Attente du démarrage du serveur frontend sur http://localhost:4173..."
+          for i in {1..10}; do
+            curl -s http://localhost:4173 && break
+            sleep 3
           done
-          echo "Frontend démarré."
-
+      
       - name: Exécuter les tests Selenium
-        run: |
-          pytest selenium/home_test.py
-
+        run: pytest selenium/home_test.py
   docker-backend:
     name: Build Docker Image - Backend
     runs-on: ubuntu-latest
