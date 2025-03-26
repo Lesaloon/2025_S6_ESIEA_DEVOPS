@@ -85,8 +85,3 @@ User.beforeUpdate(async (user) => {
     user.password = await crypto.hash("sha512", user.password);
   }
 });
-
-User.belongsToMany(Business, { through: "UserBusiness" });
-Business.belongsToMany(User, { through: "UserBusiness" });
-User.hasMany(Review, { foreignKey: "userId" });
-Review.belongsTo(User, { foreignKey: "userId" });
