@@ -28,19 +28,35 @@ class AuthController {
 	}
 
 	static register(req: Request, res: Response) {
-		res.send("Register user");
-	}
-
-	static logout(req: Request, res: Response) {
-		res.send("Logout user");
+		const { email, password, firstName, lastName } = req.body;
+		if (!email || !password) {
+			return res.status(400).send("Email and password are required");
+		}
+		if (typeof email !== "string" || typeof password !== "string") {
+			return res.status(400).send("Email and password must be strings");
+		}
+		if (!firstName || !lastName) {
+			return res.status(400).send("First name and last name are required");
+		}
+		if (typeof firstName !== "string" || typeof lastName !== "string") {
+			return res.status(400).send("First name and last name must be strings");
+		}
+		if (firstName.length < 2 || lastName.length < 2) {
+			return res.status(400).send("First name and last name must be at least 2 characters long");
+		}
+		try {
+			const user = AuthService.register(email, password, firstName, lastName);
+			return res.status(201).json(user);
+		} catch (error) {
+			if (error instanceof Error) {
+				return res.status(400).send(error.message);
+			}
+			return res.status(500).send("Internal server error");
+		}
 	}
 
 	static refreshToken(req: Request, res: Response) {
 		res.send("Refresh token");
-	}
-
-	static verifyEmail(req: Request, res: Response) {
-		res.send("Verify email");
 	}
 
 	static resetPassword(req: Request, res: Response) {
