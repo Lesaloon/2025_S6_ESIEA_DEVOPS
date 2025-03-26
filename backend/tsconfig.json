@@ -9,6 +9,9 @@
     "skipLibCheck": true,
     "strict": true,
     "typeRoots": ["./node_modules/@types"],
-    "types": ["jest", "node"]
+    "types": ["jest", "node"],
+	"paths": {
+      "*": ["*"]
+    }
   }
 }
