@@ -1,9 +1,13 @@
 export type Review = {
-    id: string;
-    businessName: string;
+    id: number;
     rating: number;
-    date: string;
-    content: string;
-    author: string;
-    helpfulCount: number;
+    comment: string;
+    businessId: number;
+    userId: number;
+    businessName?: string;
+    author?: string;
+    date?: string;
+    helpfulCount?: number;
+    createdAt?: string;
+    updatedAt?: string;
 };

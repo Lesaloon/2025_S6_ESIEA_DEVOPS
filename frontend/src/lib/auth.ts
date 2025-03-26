@@ -1,6 +1,5 @@
 import { create } from 'zustand';
 import { User } from '@/models/User';
-import { useMockData } from '@/contexts/MockDataContext';
 
 interface AuthState {
   token: string | null;
@@ -21,7 +20,7 @@ export const useAuth = create<AuthState>((set) => ({
   login: async (email: string, password: string) => {
     try {
       set({ isLoading: true, error: null });
-      const { users } = useMockData();
+      const { users } = [];
       const user = users.find(user => user.email === email && user.password === password);
       
       if (user) {

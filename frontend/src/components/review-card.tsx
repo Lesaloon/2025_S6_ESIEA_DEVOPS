@@ -1,27 +1,35 @@
 import { Star, ThumbsUp, Flag } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { Button } from "./ui/button";
+import { User } from "@/models/User";
+import { useEffect, useState } from "react";
+import UserService from "@/api/services/UserService";
 
 interface ReviewCardProps {
-  author: string;
+  userId: number;
   rating: number;
-  date: string;
-  content: string;
-  helpfulCount: number;
+  createdAt: string;
+  comment: string;
 }
 
 export function ReviewCard({
-  author,
+  userId,
   rating,
-  date,
-  content,
-  helpfulCount,
+  createdAt,
+  comment,
 }: ReviewCardProps) {
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    UserService.getUserById(userId).then(setUser);
+  }
+  , [userId]);
+
   return (
     <div className="border-b py-6">
       <div className="flex gap-4">
         <div>
-          <h3 className="font-semibold">{author}</h3>
+          <h3 className="font-semibold">{user?.firstName} {user?.lastName}</h3>
           <p className="text-sm text-gray-500">
           </p>
         </div>
@@ -36,22 +44,11 @@ export function ReviewCard({
             />
           ))}
           <span className="text-gray-500 text-sm ml-2">
-            {formatDate(date)}
+            {formatDate(createdAt)}
           </span>
         </div>
 
-        <p className="mt-4 text-gray-700">{content}</p>
-
-        <div className="mt-4 flex items-center gap-4">
-          <Button variant="outline" size="sm">
-            <ThumbsUp className="w-4 h-4 mr-2" />
-            Utile ({helpfulCount})
-          </Button>
-          <Button variant="ghost" size="sm">
-            <Flag className="w-4 h-4 mr-2" />
-            Signaler
-          </Button>
-        </div>
+        <p className="mt-4 text-gray-700">{comment}</p>
       </div>
     </div>
   );

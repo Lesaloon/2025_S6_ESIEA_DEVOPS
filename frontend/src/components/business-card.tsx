@@ -1,12 +1,14 @@
+import ReviewService from "@/api/services/ReviewService";
 import { Star } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Review } from "@/models/Review";
 
 interface BusinessCardProps {
-  id: string;
+  id: number;
   name: string;
   category: string;
   rating: number;
-  reviewCount: number;
   address: string;
 }
 
@@ -14,10 +16,20 @@ export function BusinessCard({
   id,
   name,
   category,
-  rating,
-  reviewCount,
   address,
 }: BusinessCardProps) {
+  const [reviews, setReviews] = useState<Review[]>([]);
+
+  useEffect(() => {
+    ReviewService.getReviewsByBusiness(id).then(setReviews);
+  }, [id]);
+
+  const averageRating =
+    reviews.length > 0
+      ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
+      : 0;
+  const roundedRating = Math.round(averageRating);
+
   return (
     <Link to={`/business/${id}`} className="group">
       <div className="border rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
@@ -27,11 +39,11 @@ export function BusinessCard({
             {Array.from({ length: 5 }).map((_, i) => (
               <Star
                 key={i}
-                className={`w-4 h-4 ${i < rating ? "fill-current" : "fill-none"}`}
+                className={`w-4 h-4 ${i < roundedRating ? "fill-current" : "fill-none"}`}
               />
             ))}
             <span className="text-gray-600 text-sm ml-2">
-              ({reviewCount} avis)
+              ({reviews.length !== null ? reviews.length : "Chargement<..."} avis)
             </span>
           </div>
           <p className="text-gray-600 text-sm mt-1">{category}</p>
