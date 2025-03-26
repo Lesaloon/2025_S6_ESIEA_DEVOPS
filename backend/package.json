@@ -6,7 +6,7 @@
 		"start": "ts-node start.ts",
 		"dev": "nodemon --exec ts-node start.ts",
 		"build": "tsc",
-		"test": "NODE_ENV=test jest"
+		"test": "jest"
 	},
 	"author": "",
 	"license": "ISC",

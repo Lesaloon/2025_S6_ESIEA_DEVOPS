@@ -1,9 +1,30 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction, RequestHandler } from "express";
+import AuthService from "../services/auth.service";
 
 class AuthController {
+	/**
+	 * Login the user
+	 * @param req
+	 * @param res
+	 */
+	static login: RequestHandler = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
+		const { email, password } = req.body;
+		if (!email || !password) {
+			return res.status(400).send("Email and password are required");
+		}
+		if (typeof email !== "string" || typeof password !== "string") {
+			return res.status(400).send("Email and password must be strings");
+		}
+		try {
+			const user = await AuthService.login(email, password);
 
-	static login(req: Request, res: Response) {
-		res.send("Login user");
+			return res.status(200).json(user)
+		} catch (error) {
+			if (error instanceof Error) {
+				return res.status(401).send(error.message);
+			}
+			return res.status(500).send("Internal server error");
+		}
 	}
 
 	static register(req: Request, res: Response) {
