@@ -76,7 +76,7 @@ jobs:
       - name: Attendre que le serveur soit prêt
         run: |
           echo "Attente du démarrage du serveur frontend..."
-          until curl -s http://localhost:5173 > /dev/null; do
+          until curl -s http://localhost:4173 > /dev/null; do
             sleep 2
           done
           echo "Frontend démarré."
