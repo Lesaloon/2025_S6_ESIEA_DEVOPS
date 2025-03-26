@@ -27,7 +27,7 @@ class AuthController {
 		}
 	}
 
-	static register(req: Request, res: Response) {
+	static register: RequestHandler = async (req: Request, res: Response): Promise<any> => {
 		const { email, password, firstName, lastName } = req.body;
 		if (!email || !password) {
 			return res.status(400).send("Email and password are required");
