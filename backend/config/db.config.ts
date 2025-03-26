@@ -1,5 +1,6 @@
 import { Dialect, Sequelize } from "sequelize";
 import dotenv from "dotenv";
+import Log from './log.config';
 dotenv.config();
 const DB_NAME = process.env.DB_NAME || "your_database_name";
 const DB_USER = process.env.DB_USER || "your_database_user";
@@ -14,15 +15,16 @@ const sequelize = new Sequelize(DB_URL, {
   logging: false,
 });
 
+const logger = new Log().getLogger();
+
 const connectDB = async () => {
   try {
 	await sequelize.authenticate();
-	console.log("Database connection has been established successfully.");
+	logger.info("Database connection has been established successfully.");
   } catch (error) {
-	console.error("Unable to connect to the database:", error);
+	logger.error("Unable to connect to the database:", error);
   }
 };
 
-connectDB();
 export { sequelize, connectDB };
 export default sequelize;
