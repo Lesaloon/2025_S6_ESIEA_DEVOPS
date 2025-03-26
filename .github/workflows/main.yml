@@ -62,26 +62,21 @@ jobs:
         working-directory: ./frontend
         run: npm run build
 
-      - name: Installer Google Chrome
+      - name: Installation de ChromeDriver
+        uses: nanasess/setup-chromedriver@v2
+        with:
+          chromedriver-version: '88.0.4324.96'
+          chromeapp: chrome
+      - run: |
+          export DISPLAY=:99
+          chromedriver --url-base=/wd/hub &
+          sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 & # optional
+
+      - name: Installation de Python et des dépendances Selenium
         run: |
           sudo apt-get update
-          sudo apt-get install -y wget gnupg unzip
-          wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
-          echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | \
-            sudo tee /etc/apt/sources.list.d/google-chrome.list
-          sudo apt-get update
-          sudo apt-get install -y google-chrome-stable
-    
-      - name: Installer Chromedriver et Python + pip
-        run: |
           sudo apt-get install -y python3-pip
-          pip install selenium pytest
-          CHROME_VERSION=$(google-chrome --version | grep -oP "\d+\.\d+\.\d+")
-          CHROMEDRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION" || curl -s https://chromedriver.storage.googleapis.com/LATEST_RELEASE)
-          wget -q "https://chromedriver.storage.googleapis.com/${CHROMEDRIVER_VERSION}/chromedriver_linux64.zip"
-          unzip chromedriver_linux64.zip
-          sudo mv chromedriver /usr/bin/chromedriver
-          sudo chmod +x /usr/bin/chromedriver
+          pip install -r selenium/requirements.txt
 
       - name: Lancer le serveur frontend
         working-directory: ./frontend
