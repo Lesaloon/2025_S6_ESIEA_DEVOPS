@@ -9,17 +9,22 @@ import DAOFactory from "../dao/DAOFactory";
 jest.mock("../services/auth.service");
 
 describe("AuthController", () => {
-  const mockUser: UserAttributes = {
-    id: 1,
-    email: "test@test.com",
-    password: crypto.hash("sha512", "password"),
-    firstName: "Test",
-    lastName: "User",
-    role: "user",
-  };
+	const mockUser: UserAttributes = {
+	  id: 1,
+	  email: "test@test.com",
+	  password: crypto.hash("sha512", "password"),
+	  firstName: "Test",
+	  lastName: "User",
+	  role: "user",
+	};
+	beforeEach(() => {
+	  const userDAO = DAOFactory.getDAO(User);
+	  userDAO.create(mockUser);
 
-  const userDAO = DAOFactory.getDAO(User);
-  userDAO.create(mockUser);
+  });
+  afterEach(() => {
+	jest.clearAllMocks();
+  });
 
   it("should login the user", async () => {
     (
