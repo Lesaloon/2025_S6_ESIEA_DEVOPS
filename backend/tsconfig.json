@@ -1,10 +1,13 @@
 {
   "compilerOptions": {
     "target": "ES2020",
-    "module": "CommonJS", // Or "ESNext" if using ESM
-    "moduleResolution": "node",
+    "module": "commonjs",
     "esModuleInterop": true,
-    "strict": true,
-    "skipLibCheck": true
-  }
+    "moduleResolution": "node",
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "skipLibCheck": true,
+    "strict": true
+  },
+  "include": ["src", "routes", "tests", "__tests__/auth.routes.test.ts", "__tests__/place.routes.test.ts", "__tests__/review.routes.test.ts", "__tests__/user.routes.test.ts"]
 }
