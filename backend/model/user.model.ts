@@ -12,8 +12,8 @@ export interface UserAttributes {
   lastName: string;
   avatar?: string;
   role: "user" | "admin";
-  businesses: Business[];
-  reviews: Review[];
+  businesses?: Business[];
+  reviews?: Review[];
 }
 
 export interface UserCreationAttributes
@@ -30,8 +30,8 @@ export class User
   lastName!: string;
   avatar?: string;
   role!: "user" | "admin";
-  businesses!: Business[];
-  reviews!: Review[];
+  businesses?: Business[];
+  reviews?: Review[];
 }
 
 User.init(
@@ -65,9 +65,7 @@ User.init(
     role: {
       type: DataTypes.ENUM("user", "admin"),
       defaultValue: "user",
-    },
-    businesses: "",
-    reviews: "",
+    }
   },
   {
     sequelize,
@@ -85,8 +83,3 @@ User.beforeUpdate(async (user) => {
     user.password = await crypto.hash("sha512", user.password);
   }
 });
-
-User.belongsToMany(Business, { through: "UserBusiness" });
-Business.belongsToMany(User, { through: "UserBusiness" });
-User.hasMany(Review, { foreignKey: "userId" });
-Review.belongsTo(User, { foreignKey: "userId" });

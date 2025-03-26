@@ -4,10 +4,11 @@ import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import { sequelize } from './config/db.config';
 import Log from './config/log.config';
+import { setupAssociations } from "./model/associations";
 
 import userRoutes from './routes/user.routes';
 import authRoutes from './routes/auth.routes';
-import placeRoutes from './routes/place.routes';
+import businessRoutes from './routes/business.routes';
 import reviewRoutes from './routes/review.routes';
 
 dotenv.config();
@@ -23,19 +24,24 @@ app.use(bodyParser.json());
 // use routes
 app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
-app.use('/api/places', placeRoutes);
+app.use('/api/businesses', businessRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api', (req, res) => {
-	  res.send('Welcome to the API');
+  res.send('Welcome to the API');
 });
 
-sequelize.sync({ alter: true })
-  .then(() => {
-    logger.info('✅ Base de données synchronisée');
-    app.listen(PORT, () => {
-      logger.info(`🚀 Serveur démarré sur le port ${PORT}`);
+setupAssociations();
+if (process.env.NODE_ENV !== 'test') {
+  sequelize.sync({ alter: true })
+    .then(() => {
+      logger.info('✅ Base de données synchronisée');
+      app.listen(PORT, () => {
+        logger.info(`🚀 Serveur démarré sur le port ${PORT}`);
+      });
+    })
+    .catch((err) => {
+      logger.error('❌ Erreur lors de la synchronisation de la base de données :', err);
     });
-  })
-  .catch((err) => {
-    logger.error('❌ Erreur lors de la synchronisation de la base de données :', err);
-  });
+}
+
+export default app;
