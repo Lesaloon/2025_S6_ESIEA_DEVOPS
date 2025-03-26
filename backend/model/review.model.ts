@@ -47,12 +47,24 @@ Review.init(
 	  allowNull: false,
 	},
 	businessId: {
-	  type: DataTypes.STRING,
+	  type: DataTypes.INTEGER,
 	  allowNull: false,
+	  references: {
+		model: "businesses",
+		key: "id",
+	  },
+	  onUpdate: 'CASCADE',
+      onDelete: 'NO ACTION',
 	},
 	userId: {
-	  type: DataTypes.STRING,
+	  type: DataTypes.INTEGER,
 	  allowNull: false,
+	  references: {
+		model: "users",
+		key: "id",
+	  },
+	  onUpdate: 'CASCADE',
+	  onDelete: 'NO ACTION',
 	},
   },
   {
