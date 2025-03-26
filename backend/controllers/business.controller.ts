@@ -4,7 +4,7 @@ import BusinessService from '../services/business.service';
 
 class BusinessController {
 
-	static async getAllBusinesss(req: Request, res: Response) {
+	static async getAllBusinesses(req: Request, res: Response) {
 		const business = await BusinessService.getAllBusinesses();
 		res.status(200).json(business);
 	}

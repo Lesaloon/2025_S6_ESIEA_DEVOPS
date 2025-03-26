@@ -5,7 +5,8 @@ class BusinessService {
 	private static businessDao = DAOFactory.getDAO(Business);
 
 	static async getAllBusinesses(): Promise<BusinessAttributes[]> {
-		return await this.businessDao.findAll();
+		const businesses: BusinessAttributes[] = await this.businessDao.findAll();
+		return businesses;
 	}
 
 	static async getBusinessById(id: number): Promise<BusinessAttributes | null> {

@@ -3,7 +3,7 @@ import BusinessController from "../controllers/business.controller";
 
 const router = Router();
 
-router.get("/", BusinessController.getAllBusinesss);
+router.get("/", BusinessController.getAllBusinesses);
 router.get("/:id", BusinessController.getBusinessById);
 router.post("/", BusinessController.createBusiness);
 router.put("/:id", BusinessController.updateBusiness);
