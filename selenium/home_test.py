@@ -37,29 +37,42 @@ def test_commerces_container_has_elements(homepage):
 
 def test_commerces_clickable(homepage):
     commerces = homepage.wait.until(
-        EC.presence_of_all_elements_located((By.XPATH, '//*[@id="selenium-businesses"]/a'))
+        EC.presence_of_all_elements_located((By.CSS_SELECTOR, '#selenium-businesses > a'))
     )
     if not commerces:
         pytest.fail("No commerces found")
-    for commerce in commerces:
-        link = WebDriverWait(commerce, 5).until(
-            EC.element_to_be_clickable((By.XPATH, "./a"))
+
+    for index in range(len(commerces)):
+        commerces = homepage.wait.until(
+            EC.presence_of_all_elements_located((By.CSS_SELECTOR, '#selenium-businesses > a'))
+        )
+        link = homepage.wait.until(
+            EC.element_to_be_clickable(commerces[index])
         )
         link.click()
-        homepage.wait.until(EC.presence_of_element_located((By.ID, "selenium-business-name")))
+
+        homepage.wait.until(
+            EC.presence_of_element_located((By.ID, "selenium-business-name"))
+        )
         homepage.browser.back()
 
 def test_categories_clickable(homepage):
     categories = homepage.wait.until(
-        EC.presence_of_all_elements_located((By.XPATH, '//*[@id="selenium-categories"]/div'))
+        EC.presence_of_all_elements_located((By.CSS_SELECTOR, '#selenium-categories > div'))
     )
     if not categories:
         pytest.fail("No categories found")
-    for category in categories:
-        clickable = WebDriverWait(category, 5).until(
-            EC.element_to_be_clickable((By.XPATH, "./div"))
+
+    for index in range(len(categories)):
+        categories = homepage.wait.until(
+            EC.presence_of_all_elements_located((By.CSS_SELECTOR, '#selenium-categories > div'))
+        )
+
+        clickable = homepage.wait.until(
+            EC.element_to_be_clickable(categories[index])
         )
         clickable.click()
+
         homepage.wait_for_element("selenium-results")
         homepage.browser.back()
 
