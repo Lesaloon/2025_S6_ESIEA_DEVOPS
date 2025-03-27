@@ -12,9 +12,11 @@ export interface RegisterData extends LoginCredentials {
 }
 
 export interface AuthResponse {
-  user: User;
-  token: string;
+  userData: User;
+  accessToken: string;
   refreshToken: string;
+  newAccessToken: string;
+  newRefreshToken: string;
 }
 
 export class AuthService {
@@ -31,13 +33,13 @@ export class AuthService {
 
   public async login(credentials: LoginCredentials): Promise<AuthResponse> {
     const response = await apiClient.post<AuthResponse>('/auth/login', credentials);
-    this.saveTokens(response.token, response.refreshToken);
+    this.saveTokens(response.accessToken, response.refreshToken);
     return response;
   }
 
   public async register(userData: RegisterData): Promise<AuthResponse> {
     const response = await apiClient.post<AuthResponse>('/auth/register', userData);
-    this.saveTokens(response.token, response.refreshToken);
+    this.saveTokens(response.accessToken, response.refreshToken);
     return response;
   }
 
@@ -51,9 +53,9 @@ export class AuthService {
     if (!refreshToken) {
       throw new Error('No refresh token available');
     }
-    
+
     const response = await apiClient.post<AuthResponse>('/auth/refresh', { refreshToken });
-    this.saveTokens(response.token, response.refreshToken);
+    this.saveTokens(response.newAccessToken, response.newRefreshToken);
     return response;
   }
 
@@ -80,6 +82,11 @@ export class AuthService {
   public async deleteAccount(): Promise<void> {
     await apiClient.post('/auth/delete-account');
     this.clearTokens();
+  }
+
+  public async getProfile(): Promise<User> {
+    const response = await apiClient.get<{user: User}>('/auth/profile');
+    return response.user;
   }
 
   public isAuthenticated(): boolean {
