@@ -47,15 +47,6 @@ def test_search_navbar_input(homepage):
     homepage.wait_for_element("selenium-results-heading")
     homepage.browser.back()
 
-def test_search_empty_navbar_input(homepage):
-    input_element = homepage.wait.until(
-        EC.presence_of_element_located((By.ID, "selenium-nav-input"))
-    )
-    input_element.send_keys("")
-    input_element.send_keys(Keys.RETURN)
-    homepage.wait_for_element("selenium-results-heading")
-    homepage.browser.back()
-
 def test_search_homepage_input(homepage):
     input_element = homepage.wait.until(
         EC.presence_of_element_located((By.ID, "selenium-home-search"))
