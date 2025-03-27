@@ -7,6 +7,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from homepage import HomePage
 import time
+import os
 
 @pytest.fixture(scope="function")
 def driver():
@@ -15,7 +16,8 @@ def driver():
     options.add_argument("--no-sandbox")
 
     driver = webdriver.Chrome(options=options)
-    driver.get("http://localhost:5173")
+    frontend_url = os.getenv("FRONTEND_URL", "http://localhost:5173")
+    driver.get(frontend_url)
     
     yield driver
     driver.close()

@@ -38,6 +38,8 @@ jobs:
 
   frontend:
     name: Frontend CI & Selenium Tests
+    env:
+      FRONTEND_URL: http://localhost:5173
     runs-on: ubuntu-latest
     services:
       xvfb:
@@ -90,9 +92,9 @@ jobs:
       
       - name: Attendre que le serveur soit prêt
         run: |
-          echo "⏳ Attente du démarrage du serveur frontend sur http://localhost:5173..."
+          echo "⏳ Attente du démarrage du serveur frontend sur $FRONTEND_PORT..."
           for i in {1..60}; do
-            status=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:5173)
+            status=$(curl -s -o /dev/null -w "%{http_code}" $FRONTEND_PORT)
             if [ "$status" -eq 200 ]; then
               echo "✅ Serveur prêt (HTTP 200)"
               exit 0
@@ -104,6 +106,8 @@ jobs:
       
       - name: Exécuter les tests Selenium
         run: pytest selenium/home_test.py
+
+
   docker-backend:
     name: Build Docker Image - Backend
     runs-on: ubuntu-latest
