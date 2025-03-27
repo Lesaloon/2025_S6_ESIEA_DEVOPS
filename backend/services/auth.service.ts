@@ -29,7 +29,9 @@ class AuthService {
 
 		const accessToken = this.generateAccessToken(user);
 		const refreshToken = this.generateRefreshToken(user);
-		return { user, accessToken, refreshToken };
+		const userData = user.toJSON() as UserCreationAttributes;
+		userData.password = ""; // remove the password from the user object
+		return { userData, accessToken, refreshToken };
 	}
 
 	/**
