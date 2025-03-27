@@ -34,6 +34,10 @@ class GenericDAO<T extends Model> {
     await instance.destroy();
     return true;
   }
+
+  async findOne(filter: WhereOptions): Promise<T | null> {
+	return this.model.findOne({ where: filter });
+  }
 }
 
 export default GenericDAO;

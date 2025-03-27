@@ -1,5 +1,5 @@
 export type Business = {
-    id: string;
+    id: number;
     name: string;
     category: string;
     rating: number;
