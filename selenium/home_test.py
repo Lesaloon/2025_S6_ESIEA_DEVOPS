@@ -36,11 +36,8 @@ def test_commerces_container_has_elements(homepage):
     homepage.verify_element_children("selenium-businesses", 3)
 
 def test_commerces_clickable(homepage):
-    commerces_container = homepage.wait.until(
-        EC.presence_of_element_located((By.ID, "selenium-businesses"))
-    )
     commerces = homepage.wait.until(
-        EC.presence_of_all_elements_located((By.XPATH, '//*[@id="selenium-businesses"]/div'))
+        EC.presence_of_all_elements_located((By.XPATH, '//*[@id="selenium-businesses"]/a'))
     )
     if not commerces:
         pytest.fail("No commerces found")
@@ -53,9 +50,6 @@ def test_commerces_clickable(homepage):
         homepage.browser.back()
 
 def test_categories_clickable(homepage):
-    categories_container = homepage.wait.until(
-        EC.presence_of_element_located((By.ID, "selenium-categories"))
-    )
     categories = homepage.wait.until(
         EC.presence_of_all_elements_located((By.XPATH, '//*[@id="selenium-categories"]/div'))
     )
