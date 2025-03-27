@@ -6,8 +6,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { useAuth } from '@/contexts/AuthContext';
 import { useNotification } from '@/contexts/NotificationContext';
+import { authService } from '@/api';
 
 const loginSchema = z.object({
   email: z.string().email('Veuillez entrer un email valide'),
@@ -18,9 +18,9 @@ type LoginForm = z.infer<typeof loginSchema>;
 
 export function LoginPage() {
   const navigate = useNavigate();
-  const { login } = useAuth();
   const { addNotification } = useNotification();
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
   const {
@@ -32,18 +32,37 @@ export function LoginPage() {
   });
 
   const onSubmit = async (data: LoginForm) => {
+    setIsLoading(true);
+    setError('');
+    
     try {
-      login(data.email, data.password);
-      navigate('/');
+      const response = await authService.login({
+        email: data.email,
+        password: data.password
+      });
+      
+      // If login successful, store user info if needed
+      if (response && response.user) {
+        // You could store user info in a global state if needed
+        // For example: userStore.setUser(response.user);
+        addNotification("Connexion réussie", 'success' );
+        navigate('/');
+      }
     } catch (err) {
       if (err.response) {
-        setError('Email ou mot de passe incorrect.');
+        // Server responded with an error
+        setError(err.response.data.message || 'Email ou mot de passe incorrect.');
       } else if (err.request) {
-        setError('Network error. Please try again.');
+        // No response from the server
+        setError('Erreur réseau. Veuillez réessayer.');
       } else {
-        setError('An unexpected error occurred.');
+        // Other errors
+        setError('Une erreur inattendue s\'est produite.');
       }
-      addNotification(error);
+      
+      addNotification(error, 'error');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -119,8 +138,9 @@ export function LoginPage() {
               <Button
                 type="submit"
                 className="w-full"
+                disabled={isLoading}
               >
-                Se connecter
+                {isLoading ? 'Connexion en cours...' : 'Se connecter'}
               </Button>
             </div>
           </form>
