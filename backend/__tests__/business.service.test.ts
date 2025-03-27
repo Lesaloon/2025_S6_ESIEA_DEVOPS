@@ -22,7 +22,8 @@ describe('BusinessService static', () => {
         phone: '0123456789',
         website: 'https://test.com',
         hours: [{ day: 'Monday', hours: '9:00-18:00' }],
-        features: ['WiFi', 'Parking']
+        features: ['WiFi', 'Parking'],
+        ownerId: 1
       }
     ];
 
@@ -50,7 +51,8 @@ describe('BusinessService static', () => {
       phone: '0123456789',
       website: 'https://test.com',
       hours: [{ day: 'Monday', hours: '9:00-18:00' }],
-      features: ['WiFi', 'Parking']
+      features: ['WiFi', 'Parking'],
+      ownerId: 1
     };
 
     const getBusinessByIdSpy = jest
@@ -77,7 +79,8 @@ describe('BusinessService static', () => {
       phone: '0123456789',
       website: 'https://test.com',
       hours: [{ day: 'Monday', hours: '9:00-18:00' }],
-      features: ['WiFi', 'Parking']
+      features: ['WiFi', 'Parking'],
+      ownerId: 1
     };
 
     const createBusinessSpy = jest
@@ -110,7 +113,8 @@ describe('BusinessService static', () => {
         phone: '0123456789',
         website: 'https://test.com',
         hours: [{ day: 'Monday', hours: '9:00-18:00' }],
-        features: ['WiFi', 'Parking']
+        features: ['WiFi', 'Parking'],
+        ownerId: 1
       });
 
     const result = await BusinessService.updateBusiness(1, mockBusiness);
@@ -127,7 +131,8 @@ describe('BusinessService static', () => {
       phone: '0123456789',
       website: 'https://test.com',
       hours: [{ day: 'Monday', hours: '9:00-18:00' }],
-      features: ['WiFi', 'Parking']
+      features: ['WiFi', 'Parking'],
+      ownerId: 1
     });
   });
 
