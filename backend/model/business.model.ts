@@ -2,7 +2,6 @@ import { DataTypes, Model, Optional } from "sequelize";
 import { sequelize } from "../config/db.config";
 import { Review } from "./review.model";
 import { User } from "./user.model";
-import crypto from "crypto";
 
 export interface BusinessAttributes {
   id: number;
