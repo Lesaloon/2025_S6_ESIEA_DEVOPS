@@ -45,7 +45,6 @@ class AuthController {
 		}
 		try {
 			const user = await AuthService.register(email, password, firstName, lastName);
-			const user = await AuthService.register(email, password, firstName, lastName);
 			return res.status(201).json(user);
 		} catch (error: any) {
 			const message = error?.message || "Registration failed";
