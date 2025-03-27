@@ -15,7 +15,7 @@ def driver():
     options.add_argument("--no-sandbox")
 
     driver = webdriver.Chrome(options=options)
-    driver.get("http://localhost:3001")
+    driver.get("http://localhost:4173")
     
     yield driver
     driver.close()
