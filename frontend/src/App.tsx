@@ -7,14 +7,12 @@ import { LoginPage } from './pages/login';
 import { RegisterPage } from './pages/register';
 import { ProfilePage } from './pages/profile';
 import { AddBusinessPage } from './pages/add-business';
-import { MockDataProvider } from '@/contexts/MockDataContext';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { NotificationProvider } from '@/contexts/NotificationContext';
 
 function App() {
   return (
     <AuthProvider>
-      <MockDataProvider>
         <NotificationProvider>
           <Router>
             <div className="min-h-screen bg-background">
@@ -31,7 +29,6 @@ function App() {
             </div>
           </Router>
         </NotificationProvider>
-      </MockDataProvider>
     </AuthProvider>
   );
 }

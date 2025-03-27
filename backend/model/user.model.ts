@@ -10,7 +10,6 @@ export interface UserAttributes {
   password: string;
   firstName: string;
   lastName: string;
-  avatar?: string;
   role: "user" | "admin";
   businesses?: Business[];
   reviews?: Review[];
@@ -28,7 +27,6 @@ export class User
   password!: string;
   firstName!: string;
   lastName!: string;
-  avatar?: string;
   role!: "user" | "admin";
   businesses?: Business[];
   reviews?: Review[];
@@ -57,10 +55,6 @@ User.init(
     lastName: {
       type: DataTypes.STRING,
       allowNull: false,
-    },
-    avatar: {
-      type: DataTypes.STRING,
-      allowNull: true,
     },
     role: {
       type: DataTypes.ENUM("user", "admin"),
