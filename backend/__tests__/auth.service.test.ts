@@ -33,4 +33,27 @@ describe('AuthService', () => {
 
 	});
 
+	it('should call register', async () => {
+		expect.assertions(2);
+		const mockResponse = {
+			userData : {
+				id: 1,
+				email: "jhondoe@test.com",
+				firstName: 'John',
+				lastName: 'Doe',
+				role: "user",
+				businesses: [] as Business[],
+				reviews: [] as Review[],
+			} as UserAttributes,
+			accessToken: "access_token",
+			refreshToken: "refresh_token"
+		};
+		const registerSpy = jest.spyOn(AuthService, 'register').mockResolvedValue(mockResponse);
+
+		const result = await AuthService.register(mockResponse.userData.email, "password", mockResponse.userData.firstName, mockResponse.userData.lastName);
+
+		expect(registerSpy).toHaveBeenCalledWith(mockResponse.userData.email, "password", mockResponse.userData.firstName, mockResponse.userData.lastName);
+		expect(result).toEqual(mockResponse);
+	});
+
 });

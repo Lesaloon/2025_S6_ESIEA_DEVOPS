@@ -75,9 +75,12 @@ class AuthService {
 		} as UserCreationAttributes;
 		const newUser = await this.userDAO.create(userData);
 		// generate access token and refresh token
+		// remove the password from the user object
+		const userWithoutPassword = newUser.toJSON() as UserCreationAttributes;
+		userWithoutPassword.password = ""; // remove the password from the user object
 		const accessToken = this.generateAccessToken(newUser);
 		const refreshToken = this.generateRefreshToken(newUser);
-		return { user: newUser, accessToken, refreshToken };
+		return { userData: userWithoutPassword, accessToken, refreshToken };
 	}
 
 	/**
