@@ -45,10 +45,11 @@ class AuthController {
 			return res.status(400).send("First name and last name must be at least 2 characters long");
 		}
 		try {
-			const user = AuthService.register(email, password, firstName, lastName);
+			const user = await AuthService.register(email, password, firstName, lastName);
 			return res.status(201).json(user);
 		} catch (error) {
 			if (error instanceof Error) {
+				console.error(error.message);
 				return res.status(400).send(error.message);
 			}
 			return res.status(500).send("Internal server error");

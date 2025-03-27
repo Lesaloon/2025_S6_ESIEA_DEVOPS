@@ -1,4 +1,4 @@
-import { User, UserCreationAttributes } from "../model/user.model";
+import { User, UserAttributes, UserCreationAttributes } from "../model/user.model";
 import DAOFactory from "../dao/DAOFactory";
 import crypto from "crypto";
 import jwt from 'jsonwebtoken';
@@ -48,7 +48,7 @@ class AuthService {
 	 * @returns user object with tokens
 	 */
 	static async register(email: string, password: string, firstName: string, lastName: string) {
-		const user = await this.userDAO.findOne({ where: { email } });
+		const user = await this.userDAO.findOne({ email });
 		if (user) {
 			throw new Error("User already exists");
 		}
@@ -76,7 +76,7 @@ class AuthService {
 		const newUser = await this.userDAO.create(userData);
 		// generate access token and refresh token
 		// remove the password from the user object
-		const userWithoutPassword = newUser.toJSON() as UserCreationAttributes;
+		const userWithoutPassword = newUser.toJSON() as UserAttributes;
 		userWithoutPassword.password = ""; // remove the password from the user object
 		const accessToken = this.generateAccessToken(newUser);
 		const refreshToken = this.generateRefreshToken(newUser);
