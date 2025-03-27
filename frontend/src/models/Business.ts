@@ -10,4 +10,5 @@ export type Business = {
     website: string;
     hours: { day: string; hours: string }[];
     features: string[];
+    ownerId: number;
 };

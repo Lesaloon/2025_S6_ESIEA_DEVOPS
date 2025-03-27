@@ -46,8 +46,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const login = async (email: string, password: string) => {
-    const { userData } = await authService.login({ email, password });
-    setUser(userData);
+    try {
+      const { userData } = await authService.login({ email, password });
+      setUser(userData);
+    }
+    catch (err) {
+      console.error("Error logging in:", err);
+      throw err;
+    }
   };
 
   const logout = () => {

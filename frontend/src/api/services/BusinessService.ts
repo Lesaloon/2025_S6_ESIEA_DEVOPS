@@ -35,6 +35,27 @@ export class BusinessService {
     }
   }
 
+  public async getAllBusinessesByOwnerId(ownerId: number): Promise<Business[]> {
+    try {
+      const response = await apiClient.get<any>('/businesses');
+
+      if (Array.isArray(response)) {
+        return response.filter((business: Business) => business.ownerId === ownerId);
+      }
+
+      if (response && typeof response === 'object') {
+        if (Array.isArray(response.data)) return response.data.filter((business: Business) => business.ownerId === ownerId);
+        if (Array.isArray(response.businesses)) return response.businesses.filter((business: Business) => business.ownerId === ownerId);
+        if (Array.isArray(response.results)) return response.results.filter((business: Business) => business.ownerId === ownerId);
+      }
+
+      console.warn('Format de réponse inattendu:', response);
+      return [];
+    } catch (error) {
+      console.error('Erreur lors de la récupération des businesses:', error);
+      throw error;
+    }  }
+
   public async getBusinessById(id: number): Promise<Business> {
     return await apiClient.get<Business>(`/businesses/${id}`);
   }
