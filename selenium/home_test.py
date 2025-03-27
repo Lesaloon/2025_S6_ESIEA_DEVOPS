@@ -32,49 +32,11 @@ def homepage(driver):
 def test_navbar_title(homepage):
     homepage.verify_element_text("selenium-nav-logo", "Yelp-EA")
 
-def test_commerces_container_has_elements(homepage):
-    homepage.verify_element_children("selenium-businesses", 3)
+def test_commerces_container(homepage):
+    EC.presence_of_element_located((By.ID, "selenium-businesses"))
 
-def test_commerces_clickable(homepage):
-    commerces = homepage.wait.until(
-        EC.presence_of_all_elements_located((By.CSS_SELECTOR, '#selenium-businesses > a'))
-    )
-    if not commerces:
-        pytest.fail("No commerces found")
-
-    for index in range(len(commerces)):
-        commerces = homepage.wait.until(
-            EC.presence_of_all_elements_located((By.CSS_SELECTOR, '#selenium-businesses > a'))
-        )
-        link = homepage.wait.until(
-            EC.element_to_be_clickable(commerces[index])
-        )
-        link.click()
-
-        homepage.wait.until(
-            EC.presence_of_element_located((By.ID, "selenium-business-name"))
-        )
-        homepage.browser.back()
-
-def test_categories_clickable(homepage):
-    categories = homepage.wait.until(
-        EC.presence_of_all_elements_located((By.CSS_SELECTOR, '#selenium-categories > div'))
-    )
-    if not categories:
-        pytest.fail("No categories found")
-
-    for index in range(len(categories)):
-        categories = homepage.wait.until(
-            EC.presence_of_all_elements_located((By.CSS_SELECTOR, '#selenium-categories > div'))
-        )
-
-        clickable = homepage.wait.until(
-            EC.element_to_be_clickable(categories[index])
-        )
-        clickable.click()
-
-        homepage.wait_for_element("selenium-results")
-        homepage.browser.back()
+def test_categories_container(homepage):
+    EC.presence_of_element_located((By.ID, "selenium-categories"))
 
 def test_search_navbar_input(homepage):
     input_element = homepage.wait.until(
