@@ -26,9 +26,6 @@ app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/businesses', businessRoutes);
 app.use('/api/reviews', reviewRoutes);
-app.use('/api', (req, res) => {
-  res.send('Welcome to the API');
-});
 
 setupAssociations();
 if (process.env.NODE_ENV !== 'test') {
