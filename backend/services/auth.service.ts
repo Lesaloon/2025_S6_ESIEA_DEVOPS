@@ -1,4 +1,4 @@
-import { User, UserCreationAttributes } from "../model/user.model";
+import { User, UserAttributes, UserCreationAttributes } from "../model/user.model";
 import DAOFactory from "../dao/DAOFactory";
 import crypto from "crypto";
 import jwt from 'jsonwebtoken';
