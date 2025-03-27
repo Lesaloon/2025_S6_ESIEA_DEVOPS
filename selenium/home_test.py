@@ -11,14 +11,11 @@ import time
 @pytest.fixture(scope="function")
 def driver():
     options = Options()
-    options.add_argument("--headless=new")
+    options.add_argument("--headless")
     options.add_argument("--no-sandbox")
-    options.add_argument("--disable-dev-shm-usage")
-    options.binary_location = "/usr/bin/google-chrome"
 
-    service = Service("/usr/bin/chromedriver")
-    driver = webdriver.Chrome(service=service, options=options)
-    driver.get("http://localhost:4173")
+    driver = webdriver.Chrome(options=options)
+    driver.get("http://localhost:3001")
     
     yield driver
     driver.close()
