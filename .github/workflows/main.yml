@@ -92,9 +92,9 @@ jobs:
       
       - name: Attendre que le serveur soit prêt
         run: |
-          echo "⏳ Attente du démarrage du serveur frontend sur $FRONTEND_PORT..."
+          echo "⏳ Attente du démarrage du serveur frontend sur $FRONTEND_URL..."
           for i in {1..60}; do
-            status=$(curl -s -o /dev/null -w "%{http_code}" $FRONTEND_PORT)
+            status=$(curl -s -o /dev/null -w "%{http_code}" $FRONTEND_URL)
             if [ "$status" -eq 200 ]; then
               echo "✅ Serveur prêt (HTTP 200)"
               exit 0
