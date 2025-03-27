@@ -1,57 +1,74 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { User } from '@/models/User';
-import { useMockData } from '@/contexts/MockDataContext';
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
+import { User } from "@/models/User";
+import { authService } from "@/api";
 
 interface AuthContextType {
   user: User | null;
-  login: (email: string, password: string) => void;
+  login: (email: string, password: string) => Promise<void>;
   logout: () => void;
+  isAuthenticated: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const { users } = useMockData();
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    console.log('token', token);
-    if (token) {
-      const [email, password] = atob(token).split(':');
-      try {
-        const loggedInUser = users.find(user => user.email === email && user.password === password);
-        if (loggedInUser) {
-          setUser(loggedInUser);
-        }
-      } catch (e) {
-        console.error('Invalid token:', e);
-        localStorage.removeItem('token');
-      }
-    }
-    }, [users]);
+    const initializeAuth = async () => {
+      const accessToken = localStorage.getItem("token");
+      const refreshToken = localStorage.getItem("refreshToken");
 
-  const login = (email: string, password: string) => {
-    const loggedInUser = users.find(user => user.email === email && user.password === password);
-    if (loggedInUser) {
-      localStorage.setItem('token', btoa(`${email}:${password}`));
-      setUser(loggedInUser);
-    }
+      if (!accessToken || !refreshToken) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const user = await authService.getProfile();
+        setUser(user);
+      } catch (err) {
+        console.error("Token invalide ou expiré");
+        logout();
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    initializeAuth();
+  }, []);
+
+  const login = async (email: string, password: string) => {
+    const { userData } = await authService.login({ email, password });
+    setUser(userData);
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem("token");
+    localStorage.removeItem("refreshToken");
     setUser(null);
   };
 
-  return (
-    <AuthContext.Provider value={{ user, login, logout }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  const value: AuthContextType = {
+    user,
+    login,
+    logout,
+    isAuthenticated: !!user,
+  };
+
+  if (loading) return null;
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
-export const useAuth = () => {
+export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
   if (!context) {
     throw new Error("useAuth must be used within an AuthProvider");

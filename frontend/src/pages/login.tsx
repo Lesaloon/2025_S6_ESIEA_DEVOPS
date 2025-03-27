@@ -1,27 +1,31 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Eye, EyeOff } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { useAuth } from '@/contexts/AuthContext';
-import { useNotification } from '@/contexts/NotificationContext';
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Eye, EyeOff } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { useNotification } from "@/contexts/NotificationContext";
+import { authService } from "@/api";
+import { useAuth } from "@/contexts/AuthContext";
 
 const loginSchema = z.object({
-  email: z.string().email('Veuillez entrer un email valide'),
-  password: z.string().min(6, 'Le mot de passe doit contenir au moins 6 caractères'),
+  email: z.string().email("Veuillez entrer un email valide"),
+  password: z
+    .string()
+    .min(6, "Le mot de passe doit contenir au moins 6 caractères"),
 });
 
 type LoginForm = z.infer<typeof loginSchema>;
 
 export function LoginPage() {
   const navigate = useNavigate();
-  const { login } = useAuth();
   const { addNotification } = useNotification();
+  const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const {
     register,
@@ -32,18 +36,28 @@ export function LoginPage() {
   });
 
   const onSubmit = async (data: LoginForm) => {
+    setIsLoading(true);
+    setError(null);
+
     try {
-      login(data.email, data.password);
-      navigate('/');
-    } catch (err) {
-      if (err.response) {
-        setError('Email ou mot de passe incorrect.');
-      } else if (err.request) {
-        setError('Network error. Please try again.');
-      } else {
-        setError('An unexpected error occurred.');
+      await login(data.email, data.password);
+      addNotification("Connexion réussie", "success");
+      navigate("/");
+    } catch (err: any) {
+      let errorMessage = "Email ou mot de passe incorrect.";
+      
+      if (err?.response?.data?.message) {
+        errorMessage = err.response.data.message;
+      } else if (err instanceof Error) {
+        errorMessage = err.message;
+      } else if (err?.request) {
+        errorMessage = "Erreur réseau. Veuillez réessayer.";
       }
-      addNotification(error);
+      
+      setError(errorMessage);
+      addNotification(errorMessage, "error");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -54,8 +68,11 @@ export function LoginPage() {
           Connexion
         </h2>
         <p className="mt-2 text-center text-sm text-gray-600">
-          Ou{' '}
-          <Link to="/register" className="font-medium text-primary hover:text-primary/90">
+          Ou{" "}
+          <Link
+            to="/register"
+            className="font-medium text-primary hover:text-primary/90"
+          >
             créez un compte gratuitement
           </Link>
         </p>
@@ -65,32 +82,40 @@ export function LoginPage() {
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
           <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Email
               </label>
               <div className="mt-1">
                 <Input
                   id="email"
                   type="email"
-                  {...register('email')}
-                  className={errors.email ? 'border-red-500' : ''}
+                  {...register("email")}
+                  className={errors.email ? "border-red-500" : ""}
                 />
                 {errors.email && (
-                  <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
+                  <p className="mt-1 text-sm text-red-600">
+                    {errors.email.message}
+                  </p>
                 )}
               </div>
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Mot de passe
               </label>
               <div className="mt-1 relative">
                 <Input
                   id="password"
-                  type={showPassword ? 'text' : 'password'}
-                  {...register('password')}
-                  className={errors.password ? 'border-red-500' : ''}
+                  type={showPassword ? "text" : "password"}
+                  {...register("password")}
+                  className={errors.password ? "border-red-500" : ""}
                 />
                 <button
                   type="button"
@@ -104,7 +129,9 @@ export function LoginPage() {
                   )}
                 </button>
                 {errors.password && (
-                  <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
+                  <p className="mt-1 text-sm text-red-600">
+                    {errors.password.message}
+                  </p>
                 )}
               </div>
             </div>
@@ -116,11 +143,8 @@ export function LoginPage() {
             )}
 
             <div>
-              <Button
-                type="submit"
-                className="w-full"
-              >
-                Se connecter
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? "Connexion en cours..." : "Se connecter"}
               </Button>
             </div>
           </form>

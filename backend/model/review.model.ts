@@ -3,8 +3,6 @@ import { sequelize } from "../config/db.config";
 import { Business } from "./business.model";
 import { User } from "./user.model";
 
-import crypto from "crypto";
-
 export interface ReviewAttributes {
   id: number;
   rating: number;

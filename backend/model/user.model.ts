@@ -10,7 +10,6 @@ export interface UserAttributes {
   password: string;
   firstName: string;
   lastName: string;
-  avatar?: string;
   role: "user" | "admin";
   businesses?: Business[];
   reviews?: Review[];
@@ -28,7 +27,6 @@ export class User
   password!: string;
   firstName!: string;
   lastName!: string;
-  avatar?: string;
   role!: "user" | "admin";
   businesses?: Business[];
   reviews?: Review[];
@@ -58,10 +56,6 @@ User.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    avatar: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
     role: {
       type: DataTypes.ENUM("user", "admin"),
       defaultValue: "user",
@@ -74,12 +68,11 @@ User.init(
 );
 
 User.beforeCreate(async (user) => {
-  user.password = await crypto.hash("sha512", user.password);
-  user.id = +crypto.randomUUID();
+  user.password = crypto.createHash("sha512").update(user.password).digest("hex");
 });
 
 User.beforeUpdate(async (user) => {
   if (user.changed("password")) {
-    user.password = await crypto.hash("sha512", user.password);
+    user.password = crypto.createHash("sha512").update(user.password).digest("hex");
   }
 });

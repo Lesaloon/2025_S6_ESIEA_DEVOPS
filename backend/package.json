@@ -6,7 +6,7 @@
 		"start": "ts-node start.ts",
 		"dev": "nodemon --exec ts-node start.ts",
 		"build": "tsc",
-		"test": "NODE_ENV=test jest"
+		"test": "jest"
 	},
 	"author": "",
 	"license": "ISC",
@@ -17,6 +17,7 @@
 		"@types/cors": "^2.8.17",
 		"@types/express": "^5.0.1",
 		"@types/jest": "^29.5.14",
+		"@types/jsonwebtoken": "^9.0.9",
 		"@types/mocha": "^10.0.10",
 		"@types/node": "^22.13.13",
 		"@types/supertest": "^6.0.3",
@@ -30,6 +31,7 @@
 		"crypto": "^1.0.1",
 		"dotenv": "^16.4.7",
 		"express": "^4.21.2",
+		"express-jwt": "^8.5.1",
 		"jsonwebtoken": "^9.0.2",
 		"log4js": "^6.9.1",
 		"nodemon": "^3.1.9",
