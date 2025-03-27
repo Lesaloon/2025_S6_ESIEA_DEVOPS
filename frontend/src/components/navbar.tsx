@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import { Search, User, Menu } from "lucide-react";
-import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { useAuth } from "@/contexts/AuthContext";
@@ -10,12 +9,12 @@ export function Navbar() {
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, logout } = useAuth();
+  const { logout, isAuthenticated } = useAuth();
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const termFromUrl = params.get("term");
-    
+
     if (termFromUrl) {
       setSearchTerm(termFromUrl);
     } else if (location.pathname !== "/search") {
@@ -24,17 +23,19 @@ export function Navbar() {
   }, [location.pathname, location.search]);
 
   const handleSearch = () => {
-    if (searchTerm.trim()) {
-      navigate(`/search?term=${encodeURIComponent(searchTerm.trim())}`);
-    } else {
-      navigate(`/search?term=`);
-    }
+    if (!searchTerm.trim()) navigate("/search")
+    navigate(`/search?term=${encodeURIComponent(searchTerm.trim())}`);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       handleSearch();
     }
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
   };
 
   return (
@@ -44,6 +45,7 @@ export function Navbar() {
           <Link to="/" className="text-2xl font-bold" id="selenium-nav-logo">
             Yelp-EA
           </Link>
+
           <div className="hidden md:flex items-center gap-2 bg-gray-100 rounded-full px-4 py-2 flex-1 min-w-[300px]">
             <Search className="w-5 h-5 text-gray-500" />
             <Input
@@ -66,14 +68,14 @@ export function Navbar() {
             )}
           </div>
         </div>
-        
+
         <div className="flex items-center gap-4">
-          {user ? (
+          {isAuthenticated ? (
             <>
               <Link to="/profile" className="text-gray-700 hover:text-primary">
                 Mon Profil
               </Link>
-              <Button variant="outline" onClick={logout}>
+              <Button variant="outline" onClick={handleLogout}>
                 Déconnexion
               </Button>
             </>
@@ -87,7 +89,8 @@ export function Navbar() {
               </Link>
             </>
           )}
-          <Button variant="ghost" className="md:hidden">
+
+          <Button variant="ghost" className="md:hidden" aria-label="Menu mobile">
             <Menu className="w-5 h-5" />
           </Button>
         </div>
