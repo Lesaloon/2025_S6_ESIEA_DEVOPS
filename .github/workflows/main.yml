@@ -71,6 +71,11 @@ jobs:
         
       - name: Vérifier la version de Chrome
         run: chrome --version
+
+      - name: Installer Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
       
       - name: Installer les dépendances Python
         run: pip install selenium pytest
