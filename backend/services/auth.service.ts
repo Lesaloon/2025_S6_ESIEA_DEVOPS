@@ -125,7 +125,11 @@ class AuthService {
 			throw new Error("Token not found");
 		}
 		const user = jwt.verify(token, process.env.JWT_SECRET!) as User;
-		return user;
+		const userDAO = await this.userDAO.findOne({ id: user.id });
+		if (!userDAO) {
+			throw Object.assign(new Error("User not found"), { statusCode: 404 });
+		}
+		return userDAO;
 	}
 }
 
