@@ -1,5 +1,4 @@
 import { useAuth } from "@/contexts/AuthContext";
-import { useMockData } from "@/contexts/MockDataContext";
 import { ReviewCard } from "@/components/review-card";
 import { BusinessCard } from "@/components/business-card";
 import { useNotification } from "@/contexts/NotificationContext";
@@ -8,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 
 export function ProfilePage() {
   const { user } = useAuth();
-  const { businesses, reviews } = useMockData();
+  const { businesses, reviews } = [];
   const { addNotification } = useNotification();
   const navigate = useNavigate();
 

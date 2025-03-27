@@ -37,8 +37,14 @@ jobs:
         run: npm test
 
   frontend:
-    name: Frontend CI
+    name: Frontend CI & Selenium Tests
+    env:
+      FRONTEND_URL: http://localhost:5173
     runs-on: ubuntu-latest
+    services:
+      xvfb:
+        image: selenium/standalone-chrome:latest
+
     steps:
       - name: Checkout du code
         uses: actions/checkout@v3
@@ -57,6 +63,36 @@ jobs:
       - name: Build du frontend
         working-directory: ./frontend
         run: npm run build
+
+      - name: Installer Google Chrome v134
+        run: |
+          wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+          sudo apt-get install -y ./google-chrome-stable_current_amd64.deb
+          google-chrome --version
+      
+      - name: Installer ChromeDriver v134
+        run: |
+          wget -O chromedriver.zip https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/134.0.6998.165/linux64/chromedriver-linux64.zip
+          unzip chromedriver.zip
+          sudo mv chromedriver-linux64/chromedriver /usr/local/bin/chromedriver
+          sudo chmod +x /usr/local/bin/chromedriver
+          chromedriver --version
+  
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.12'
+  
+      - name: Install dependencies
+        run: pip install pytest selenium
+      
+      - name: Lancer le serveur frontend
+        working-directory: ./frontend
+        run: npm run preview &  
+      
+      - name: Exécuter les tests Selenium
+        run: pytest selenium/home_test.py
+
 
   docker-backend:
     name: Build Docker Image - Backend
@@ -189,6 +225,9 @@ jobs:
           echo "DB_USER=${{ secrets.DB_USER }}" >> ./backend/.env
           echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> ./backend/.env
           echo "DB_NAME=${{ secrets.DB_NAME }}" >> ./backend/.env
+          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> ./backend/.env
+          echo "JWT_REFRESH_SECRET=${{ secrets.JWT_REFRESH_SECRET }}" >> ./backend/.env
+          echo "JWT_EXPIRATION=${{ secrets.JWT_EXPIRATION }}" >> ./backend/.env
 
       - name: Lancer docker-compose
         run: docker compose --env-file ./backend/.env up -d --build
