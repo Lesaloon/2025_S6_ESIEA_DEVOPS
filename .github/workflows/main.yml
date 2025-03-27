@@ -86,15 +86,21 @@ jobs:
       
       - name: Lancer le serveur frontend
         working-directory: ./frontend
-        run: nohup npm run preview &
+        run: npm run preview &  
       
       - name: Attendre que le serveur soit prêt
         run: |
-          echo "Attente du démarrage du serveur frontend sur http://localhost:4173..."
-          for i in {1..10}; do
-            curl -s http://localhost:4173 && break
-            sleep 3
+          echo "⏳ Attente du démarrage du serveur frontend sur http://localhost:5173..."
+          for i in {1..60}; do
+            status=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:5173)
+            if [ "$status" -eq 200 ]; then
+              echo "✅ Serveur prêt (HTTP 200)"
+              exit 0
+            fi
+            sleep 1
           done
+          echo "❌ Le serveur frontend n'a pas démarré dans le délai imparti"
+          exit 1
       
       - name: Exécuter les tests Selenium
         run: pytest selenium/home_test.py
