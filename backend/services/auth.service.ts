@@ -3,7 +3,6 @@ import DAOFactory from "../dao/DAOFactory";
 import crypto from "crypto";
 import jwt from 'jsonwebtoken';
 
-
 class AuthService {
 	private static userDAO = DAOFactory.getDAO(User);
 	/**
@@ -17,14 +16,14 @@ class AuthService {
 	 * @returns user object with tokens
 	 */
 	static async login(email: string, password: string) {
-		const user = await this.userDAO.findOne({ where: { email } });
+		const user = await this.userDAO.findOne({ email });
 		if (!user) {
-			throw new Error("User not found");
+			throw Object.assign(new Error("User not found"), { statusCode: 404 });
 		}
 		// check if password is correct
 		const testpass = await crypto.hash("sha512", password)
 		if (user.password != testpass) {
-			throw new Error("Invalid password");
+			throw Object.assign(new Error("Invalid password"), { statusCode: 401 });
 		}
 
 		const accessToken = this.generateAccessToken(user);
@@ -48,36 +47,40 @@ class AuthService {
 	 * @returns user object with tokens
 	 */
 	static async register(email: string, password: string, firstName: string, lastName: string) {
-		const user = await this.userDAO.findOne({ where: { email } });
-		if (user) {
-			throw new Error("User already exists");
-		}
-		// check if the email is valid
-		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-		if (!emailRegex.test(email)) {
-			throw new Error("Invalid email format");
-		}
+		try {
+			const user = await this.userDAO.findOne({ email });
+			if (user) {
+				throw Object.assign(new Error("User already exists"), { statusCode: 400 });
+			}
 
-		// check the password strength
-		if (password.length < 8) {
-			throw new Error("Password must be at least 8 characters long");
-		}
-		if (!/[A-Z]/.test(password)) {
-			throw new Error("Password must contain at least one uppercase letter");
-		}
+			const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+			if (!emailRegex.test(email)) {
+				throw Object.assign(new Error("Invalid email format"), { statusCode: 400 });
+			}
 
-		// create the user
-		const userData = {
-			email,
-			password,
-			firstName,
-			lastName,
-		} as UserCreationAttributes;
-		const newUser = await this.userDAO.create(userData);
-		// generate access token and refresh token
-		const accessToken = this.generateAccessToken(newUser);
-		const refreshToken = this.generateRefreshToken(newUser);
-		return { user: newUser, accessToken, refreshToken };
+			if (password.length < 8) {
+				throw Object.assign(new Error("Password must be at least 8 characters long"), { statusCode: 400 });
+			}
+			if (!/[A-Z]/.test(password)) {
+				throw Object.assign(new Error("Password must contain at least one uppercase letter"), { statusCode: 400 });
+			}
+
+			const userData = {
+				email,
+				password,
+				firstName,
+				lastName,
+			} as UserCreationAttributes;
+
+			const newUser = await this.userDAO.create(userData);
+			const accessToken = this.generateAccessToken(newUser);
+			const refreshToken = this.generateRefreshToken(newUser);
+			return { user: newUser, accessToken, refreshToken };
+		} catch (error) {
+			throw Object.assign(error instanceof Error ? error : new Error("Unknown registration error"), {
+				statusCode: (error as any).statusCode || 500,
+			});
+		}
 	}
 
 	/**
@@ -111,6 +114,14 @@ class AuthService {
 		const newAccessToken = this.generateAccessToken(user);
 		const newRefreshToken = this.generateRefreshToken(user);
 		return { newAccessToken, newRefreshToken };
+	}
+
+	static async getProfile(token: string) {
+		if (!token) {
+			throw new Error("Token not found");
+		}
+		const user = jwt.verify(token, process.env.JWT_SECRET!) as User;
+		return user;
 	}
 }
 

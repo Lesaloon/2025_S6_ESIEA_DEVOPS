@@ -68,12 +68,11 @@ User.init(
 );
 
 User.beforeCreate(async (user) => {
-  user.password = await crypto.hash("sha512", user.password);
-  user.id = +crypto.randomUUID();
+  user.password = crypto.createHash("sha512").update(user.password).digest("hex");
 });
 
 User.beforeUpdate(async (user) => {
   if (user.changed("password")) {
-    user.password = await crypto.hash("sha512", user.password);
+    user.password = crypto.createHash("sha512").update(user.password).digest("hex");
   }
 });

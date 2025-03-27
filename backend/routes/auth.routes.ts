@@ -11,5 +11,6 @@ router.post("/forgot-password", AuthController.forgotPassword);
 router.post("/change-password", AuthController.changePassword);
 router.post("/update-profile", AuthController.updateProfile);
 router.post("/delete-account", AuthController.deleteAccount);
+router.get("/profile", AuthController.getProfile);
 
 export default router;
