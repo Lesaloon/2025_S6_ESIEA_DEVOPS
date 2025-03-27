@@ -38,6 +38,8 @@ jobs:
 
   frontend:
     name: Frontend CI & Selenium Tests
+    env:
+      FRONTEND_URL: http://localhost:5173
     runs-on: ubuntu-latest
     services:
       xvfb:
@@ -62,11 +64,19 @@ jobs:
         working-directory: ./frontend
         run: npm run build
 
-      - name: Setup Chrome
-        uses: browser-actions/setup-chrome@v1.7.3
-        with:
-          install-dependencies: true
-          install-chromedriver: true 
+      - name: Installer Google Chrome v134
+        run: |
+          wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+          sudo apt-get install -y ./google-chrome-stable_current_amd64.deb
+          google-chrome --version
+      
+      - name: Installer ChromeDriver v134
+        run: |
+          wget -O chromedriver.zip https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/134.0.6998.165/linux64/chromedriver-linux64.zip
+          unzip chromedriver.zip
+          sudo mv chromedriver-linux64/chromedriver /usr/local/bin/chromedriver
+          sudo chmod +x /usr/local/bin/chromedriver
+          chromedriver --version
   
       - name: Set up Python
         uses: actions/setup-python@v2
@@ -78,18 +88,26 @@ jobs:
       
       - name: Lancer le serveur frontend
         working-directory: ./frontend
-        run: nohup npm run preview &
+        run: npm run preview &  
       
       - name: Attendre que le serveur soit prêt
         run: |
-          echo "Attente du démarrage du serveur frontend sur http://localhost:4173..."
-          for i in {1..10}; do
-            curl -s http://localhost:4173 && break
-            sleep 3
+          echo "⏳ Attente du démarrage du serveur frontend sur $FRONTEND_URL..."
+          for i in {1..60}; do
+            status=$(curl -s -o /dev/null -w "%{http_code}" $FRONTEND_URL)
+            if [ "$status" -eq 200 ]; then
+              echo "✅ Serveur prêt (HTTP 200)"
+              exit 0
+            fi
+            sleep 1
           done
+          echo "❌ Le serveur frontend n'a pas démarré dans le délai imparti"
+          exit 1
       
       - name: Exécuter les tests Selenium
         run: pytest selenium/home_test.py
+
+
   docker-backend:
     name: Build Docker Image - Backend
     runs-on: ubuntu-latest
