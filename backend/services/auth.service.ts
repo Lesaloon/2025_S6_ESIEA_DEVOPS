@@ -75,7 +75,11 @@ class AuthService {
 			const newUser = await this.userDAO.create(userData);
 			const accessToken = this.generateAccessToken(newUser);
 			const refreshToken = this.generateRefreshToken(newUser);
-			return { user: newUser, accessToken, refreshToken };
+
+			const userDataResponse = newUser.toJSON() as UserCreationAttributes;
+			userDataResponse.password = "";
+
+			return { userData: userDataResponse, accessToken, refreshToken };
 		} catch (error) {
 			throw Object.assign(error instanceof Error ? error : new Error("Unknown registration error"), {
 				statusCode: (error as any).statusCode || 500,

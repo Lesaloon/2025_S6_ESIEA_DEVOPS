@@ -1,8 +1,8 @@
 import { UserAttributes } from '../model/user.model';
 import { afterEach, describe, expect, it, jest } from '@jest/globals';
 import AuthService from '../services/auth.service';
-import { Business } from 'model/business.model';
-import { Review } from 'model/review.model';
+import { Business } from '../model/business.model';
+import { Review } from '../model/review.model';
 
 describe('AuthService', () => {
 	afterEach(() => {
@@ -18,6 +18,7 @@ describe('AuthService', () => {
 				firstName: 'John',
 				lastName: 'Doe',
 				role: "user",
+				password: "",
 				businesses: [] as Business[],
 				reviews: [] as Review[],
 			} as UserAttributes,
@@ -42,6 +43,7 @@ describe('AuthService', () => {
 				firstName: 'John',
 				lastName: 'Doe',
 				role: "user",
+				password: "",
 				businesses: [] as Business[],
 				reviews: [] as Review[],
 			} as UserAttributes,
@@ -55,5 +57,4 @@ describe('AuthService', () => {
 		expect(registerSpy).toHaveBeenCalledWith(mockResponse.userData.email, "password", mockResponse.userData.firstName, mockResponse.userData.lastName);
 		expect(result).toEqual(mockResponse);
 	});
-
 });
