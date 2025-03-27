@@ -62,23 +62,24 @@ jobs:
         working-directory: ./frontend
         run: npm run build
 
-      - name: Installer Chrome
+      - name: Set up Chrome
         uses: browser-actions/setup-chrome@v1
         with:
-          chrome-version: 120
-          install-chromedriver: true
-          install-dependencies: true
-        
-      - name: Vérifier la version de Chrome
-        run: chrome --version
-
-      - name: Installer Python
-        uses: actions/setup-python@v5
+          chrome-version: 'latest'
+  
+      - name: Set up ChromeDriver
+        run: |
+          CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+')
+          wget -N https://chromedriver.storage.googleapis.com/${CHROME_VERSION}/chromedriver_linux64.zip
+          unzip chromedriver_linux64.zip -d /usr/local/bin
+  
+      - name: Set up Python
+        uses: actions/setup-python@v2
         with:
-          python-version: '3.13'
-      
-      - name: Installer les dépendances Python
-        run: pip install selenium pytest
+          python-version: '3.12'
+  
+      - name: Install dependencies
+        run: pip install -r requirements.txt
       
       - name: Lancer le serveur frontend
         working-directory: ./frontend
