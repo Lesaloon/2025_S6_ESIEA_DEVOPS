@@ -6,7 +6,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { useAuth } from '@/lib/auth';
 
 const businessSchema = z.object({
   name: z.string().min(2, 'Le nom doit contenir au moins 2 caractères'),

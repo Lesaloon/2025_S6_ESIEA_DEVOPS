@@ -15,6 +15,7 @@ export interface BusinessAttributes {
   website: string;
   hours: { day: string; hours: string }[];
   features: string[];
+  ownerId: number;
 }
 
 export interface BusinessCreationAttributes
@@ -35,9 +36,10 @@ export class Business
   website!: string;
   hours!: { day: string; hours: string }[];
   features!: string[];
+  ownerId!: number;
 
   reviews?: Review[] | undefined;
-  owner?: User;
+  owner?: User | undefined;
 }
 
 Business.init(
@@ -92,6 +94,16 @@ Business.init(
     },
     features: {
       type: DataTypes.JSONB,
+    },
+    ownerId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "users",
+        key: "id",
+      },
+      onUpdate: "CASCADE",
+      onDelete: "NO ACTION",
     },
   },
   {

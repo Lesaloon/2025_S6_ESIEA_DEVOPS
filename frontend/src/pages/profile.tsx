@@ -2,27 +2,64 @@ import { useAuth } from "@/contexts/AuthContext";
 import { ReviewCard } from "@/components/review-card";
 import { BusinessCard } from "@/components/business-card";
 import { useNotification } from "@/contexts/NotificationContext";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { businessService, reviewService } from "@/api";
+import { Business } from "@/models/Business";
+import { Review } from "@/models/Review";
 
 export function ProfilePage() {
   const { user } = useAuth();
-  const { businesses, reviews } = [];
+  const [businesses, setBusinesses] = useState<Business[]>([]);
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const { addNotification } = useNotification();
   const navigate = useNavigate();
 
   useEffect(() => {
     if (!user) {
-      addNotification("Vous devez être connecté pour voir cette page.", "error");
+      addNotification(
+        "Vous devez être connecté pour voir cette page.",
+        "error"
+      );
       navigate("/login");
+      return;
     }
-  }, [user]);
+
+    const fetchUserData = async () => {
+      try {
+        setIsLoading(true);
+
+        const allBusinesses = await businessService.getAllBusinessesByOwnerId(
+          user.id
+        );
+
+        setBusinesses(allBusinesses);
+
+        if (user.id) {
+          const userReviews = await reviewService.getReviewsByUser(user.id);
+          setReviews(userReviews);
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+        addNotification("Erreur lors du chargement des données.", "error");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, [user, addNotification, navigate]);
 
   if (!user) return null;
-  
 
-  const userBusinesses = businesses.filter(business => user.businesses.includes(business));
-  const userReviews = reviews.filter(review => user.reviews.includes(review));
+  if (isLoading) {
+    return (
+      <div className="container mx-auto px-4 py-8 flex justify-center">
+        <p>Chargement des données...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -37,27 +74,59 @@ export function ProfilePage() {
 
       <div className="mb-8">
         <h2 className="text-2xl font-bold mb-4">Mes commerces</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {userBusinesses.map(business => (
-            <BusinessCard key={business.id} {...business} />
-          ))}
-        </div>
+        {businesses.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {businesses.map((business) => (
+              <BusinessCard key={business.id} {...business} />
+            ))}
+          </div>
+        ) : (
+          <p className="text-gray-500">Vous n'avez pas encore de commerces.</p>
+        )}
       </div>
 
       <div>
         <h2 className="text-2xl font-bold mb-4">Mes avis</h2>
-        <div className="space-y-8 mb-8 p-6 rounded-lg shadow-sm border hover:shadow-lg transition-shadow">
-          {userReviews.map(review => (
-            <div key={review.id} className="relative">
-              <ReviewCard {...review} />
-              <div className="absolute top-2 right-2 flex space-x-2">
-          <button className="text-blue-500 hover:underline">Modifier</button>
-          <button className="text-red-500 hover:underline">Supprimer</button>
+        {reviews.length > 0 ? (
+          <div className="space-y-8 mb-8">
+            {reviews.map((review) => (
+              <div
+                key={review.id}
+                className="relative p-6 rounded-lg shadow-sm border hover:shadow-lg transition-shadow"
+              >
+                <ReviewCard {...review} />
+                <div className="absolute top-2 right-2 flex space-x-2">
+                  <button
+                    className="text-blue-500 hover:underline"
+                    onClick={() => navigate(`/review/edit/${review.id}`)}
+                  >
+                    Modifier
+                  </button>
+                  <button
+                    className="text-red-500 hover:underline"
+                    onClick={async () => {
+                      try {
+                        await reviewService.deleteReview(review.id);
+                        setReviews(reviews.filter((r) => r.id !== review.id));
+                        addNotification("Avis supprimé avec succès", "success");
+                      } catch (error) {
+                        addNotification(
+                          "Erreur lors de la suppression de l'avis",
+                          "error"
+                        );
+                      }
+                    }}
+                  >
+                    Supprimer
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-gray-500">Vous n'avez pas encore publié d'avis.</p>
+        )}
       </div>
     </div>
   );
-} 
+}

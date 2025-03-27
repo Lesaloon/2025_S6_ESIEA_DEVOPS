@@ -42,7 +42,19 @@ export class ReviewService {
   }
 
   public async getReviewsByUser(userId: number): Promise<Review[]> {
-    return await apiClient.get<Review[]>(`/users/${userId}/reviews`);
+    try {
+      const response = await this.getAllReviews();
+  
+      if (Array.isArray(response)) {
+        return response.filter(review => review.userId === userId);
+      }
+  
+      return [];
+    }
+    catch (error) {
+      console.error('Erreur lors de la récupération des reviews:', error);
+      return [];
+    }
   }
 
   public async createReview(review: Omit<Review, 'id'>): Promise<Review> {

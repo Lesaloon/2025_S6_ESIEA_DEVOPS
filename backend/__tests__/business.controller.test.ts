@@ -18,7 +18,8 @@ describe('BusinessController', () => {
     phone: '0123456789',
     website: 'https://test.com',
     hours: [{ day: 'Monday', hours: '9:00-18:00' }],
-    features: ['WiFi', 'Parking']
+    features: ['WiFi', 'Parking'],
+    ownerId: 1,
   };
 
   afterEach(() => {
